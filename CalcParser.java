@@ -200,7 +200,7 @@ public class CalcParser extends Parser {
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			 _localctx.code += "READ" + ((CalculContext)_localctx).instruction.code + "HALT\n"; 
+			 _localctx.code += "  HALT\n"; 
 			}
 			_ctx.stop = _input.LT(-1);
 			 System.out.println(_localctx.code); 
@@ -391,8 +391,8 @@ public class CalcParser extends Parser {
 						if((((ExpressionContext)_localctx).op!=null?((ExpressionContext)_localctx).op.getText():null).equals("/")){
 						                                                                      ((ExpressionContext)_localctx).code =  ((ExpressionContext)_localctx).a.code + ((ExpressionContext)_localctx).b.code + "DIV\n"; 
 						                                                                  }else{ 
-						                                                                      ((ExpressionContext)_localctx).code =  ((ExpressionContext)_localctx).a.code + ((ExpressionContext)_localctx).b.code + "MUL\n";}
-						                                                                  
+						                                                                      ((ExpressionContext)_localctx).code =  ((ExpressionContext)_localctx).a.code + ((ExpressionContext)_localctx).b.code + "MUL\n";
+						                                                                  }
 						}
 						break;
 					case 2:
@@ -419,8 +419,8 @@ public class CalcParser extends Parser {
 						if((((ExpressionContext)_localctx).op!=null?((ExpressionContext)_localctx).op.getText():null).equals("+")){
 						                                                                      ((ExpressionContext)_localctx).code =  ((ExpressionContext)_localctx).c.code + ((ExpressionContext)_localctx).d.code + "ADD\n"; 
 						                                                                  }else{ 
-						                                                                      ((ExpressionContext)_localctx).code =  ((ExpressionContext)_localctx).c.code + ((ExpressionContext)_localctx).d.code + "SUB\n";}
-						                                                                  
+						                                                                      ((ExpressionContext)_localctx).code =  ((ExpressionContext)_localctx).c.code + ((ExpressionContext)_localctx).d.code + "SUB\n";
+						                                                                  }
 						}
 						break;
 					}

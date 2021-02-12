@@ -29,14 +29,14 @@ expression returns [ String code ]
                                                         {if($op.text.equals("/")){
                                                             $code = $a.code + $b.code + "DIV\n"; 
                                                         }else{ 
-                                                            $code = $a.code + $b.code + "MUL\n";}
-                                                        }
+                                                            $code = $a.code + $b.code + "MUL\n";
+                                                        }}
     | c = expression op = ( '+' | '-' ) d = expression 
                                                         {if($op.text.equals("+")){
                                                             $code = $c.code + $d.code + "ADD\n"; 
                                                         }else{ 
-                                                            $code = $c.code + $d.code + "SUB\n";}
-                                                        }
+                                                            $code = $c.code + $d.code + "SUB\n";
+                                                        }}
     | '(' e = expression ')' {$code = $e.code;}
     | f = ENTIER {$code = "PUSHI " + $f.text +"\n";}
     ;
