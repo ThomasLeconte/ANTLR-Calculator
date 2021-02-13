@@ -42,7 +42,7 @@ Pour compiler l'assembleur et le machine virtuelle, il faut :
      compilation des fichiers contenant les main, javac compilera les autres
      classes automatiquement...) 
 ```
-	$ javac MVaPAssembler.java CBaP.java
+	$ javac -encoding utf8 MVaPAssembler.java CBaP.java
 ```
 
 Exécution
