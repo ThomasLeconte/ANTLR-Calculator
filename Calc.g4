@@ -28,6 +28,7 @@ instruction returns [ String code ]
         { 
 		$code="";
         }
+    | write finInstruction
     ;
 
 expression returns [ String code ]
@@ -44,25 +45,44 @@ expression returns [ String code ]
                                                             $code = $c.code + $d.code + "SUB\n";
                                                         }}
     | '(' e = expression ')' {$code = $e.code;}
+    | IDENTIFIANT {
+                    AdresseType var = tableSymboles.getAdresseType($IDENTIFIANT.text);
+                    $code = "PUSHG "+var.adresse+"\n";
+
+                  }
     | f = ENTIER {$code = "PUSHI " + $f.text +"\n";}
     ;
 
-decl returns [ String code ] 
-    :
-        TYPE IDENTIFIANT finInstruction
+decl returns [ String code ]
+    : TYPE IDENTIFIANT finInstruction
         {
-            //System.out.println("TYPE : "+$TYPE.text + " IDENTIFIANT "+$IDENTIFIANT.text);
-            $code = "FREE "+AdresseType.getSize($TYPE.text)+"\n";
+            $code = "PUSHI 0\n";
             tableSymboles.putVar($IDENTIFIANT.text, $TYPE.text);
+        }
+
+    | TYPE IDENTIFIANT '=' expression finInstruction
+        {
+            $code = $expression.code; //PUSHI x
+            tableSymboles.putVar($IDENTIFIANT.text, $TYPE.text); //On sauvegarde la variable
         }
     ; 
 
 assignation returns [ String code ] 
     : IDENTIFIANT '=' expression
         {
-            //tableSymboles.putVar($IDENTIFIANT.text, "int"); //RETOURNE Erreur : Variable "x" de type int déjà définie
             AdresseType at = tableSymboles.getAdresseType($IDENTIFIANT.text);
             System.out.println("Variable trouvée (de type "+ at.type +" et de valeur "+$expression.code+") !");
+            $code = $expression.code; //PUSHI x (qui peut aussi être le code de l'expression)
+            $code += "STOREG "+at.adresse; //ON enregistre l'expression dans X
+        }
+    ;
+
+write returns [ String code ] 
+    :
+        'write(' var = expression ')'
+        {
+            $code += "PUSHG 0\n";
+            $code += "WRITE\n";
         }
     ;
 
