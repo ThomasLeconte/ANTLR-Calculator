@@ -240,6 +240,7 @@ public class CalcParser extends Parser {
 	public static class InstructionContext extends ParserRuleContext {
 		public String code;
 		public ExpressionContext expression;
+		public AssignationContext assignation;
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
@@ -289,11 +290,11 @@ public class CalcParser extends Parser {
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(47);
-				assignation();
+				((InstructionContext)_localctx).assignation = assignation();
 				setState(48);
 				finInstruction();
 				 
-						((InstructionContext)_localctx).code = "";
+						    ((InstructionContext)_localctx).code =  ((InstructionContext)_localctx).assignation.code;
 				        
 				}
 				break;
@@ -553,8 +554,11 @@ public class CalcParser extends Parser {
 				setState(92);
 				finInstruction();
 
-				            ((DeclContext)_localctx).code =  ((DeclContext)_localctx).expression.code; //PUSHI x
+				            ((DeclContext)_localctx).code =  "PUSHI 0\n";
+				            _localctx.code += ((DeclContext)_localctx).expression.code; //PUSHI x
 				            tableSymboles.putVar((((DeclContext)_localctx).IDENTIFIANT!=null?((DeclContext)_localctx).IDENTIFIANT.getText():null), (((DeclContext)_localctx).TYPE!=null?((DeclContext)_localctx).TYPE.getText():null)); //On sauvegarde la variable
+				            AdresseType at = tableSymboles.getAdresseType((((DeclContext)_localctx).IDENTIFIANT!=null?((DeclContext)_localctx).IDENTIFIANT.getText():null));
+				            _localctx.code += "STOREG "+at.adresse+"\n";
 				        
 				}
 				break;
@@ -607,9 +611,8 @@ public class CalcParser extends Parser {
 			((AssignationContext)_localctx).expression = expression(0);
 
 			            AdresseType at = tableSymboles.getAdresseType((((AssignationContext)_localctx).IDENTIFIANT!=null?((AssignationContext)_localctx).IDENTIFIANT.getText():null));
-			            System.out.println("Variable trouvée (de type "+ at.type +" et de valeur "+((AssignationContext)_localctx).expression.code+") !");
 			            ((AssignationContext)_localctx).code =  ((AssignationContext)_localctx).expression.code; //PUSHI x (qui peut aussi être le code de l'expression)
-			            _localctx.code += "STOREG "+at.adresse; //ON enregistre l'expression dans X
+			            _localctx.code += "STOREG "+at.adresse+"\n"; //ON enregistre l'expression dans X
 			        
 			}
 		}
