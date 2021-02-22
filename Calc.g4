@@ -16,7 +16,7 @@ calcul returns [ String code ]
         
         (instruction { $code += $instruction.code; })*
 
-        { $code += "  HALT\n"; } 
+        { $code += "HALT\n"; } 
     ;
 
 instruction returns [ String code ] 
@@ -28,7 +28,6 @@ instruction returns [ String code ]
         { 
 		    $code= $assignation.code;
         }
-    | write finInstruction
     ;
 
 expression returns [ String code ]
@@ -49,9 +48,34 @@ expression returns [ String code ]
         {
             AdresseType var = tableSymboles.getAdresseType($IDENTIFIANT.text);
             $code = "PUSHG "+var.adresse+"\n";
-
         }
-    | f = ENTIER {$code = "PUSHI " + $f.text +"\n";}
+    | f = ENTIER
+        {
+            $code = "PUSHI " + $f.text +"\n";
+        }
+    | write
+        {
+            $code = $write.code;
+        }
+    | read
+        {
+            $code = $read.code;
+        }
+    ;
+
+write returns [ String code ] 
+    : 'write(' expression ')'
+        {
+            $code = $expression.code;
+            $code += "WRITE\n";
+        }
+    ;
+
+read returns [ String code ]
+    : 'read(' expression ')'
+        {
+            $code = $expression.code;
+        }
     ;
 
 decl returns [ String code ]
@@ -74,18 +98,9 @@ decl returns [ String code ]
 assignation returns [ String code ] 
     : IDENTIFIANT '=' expression
         {
-            AdresseType at = tableSymboles.getAdresseType($IDENTIFIANT.text);
+            AdresseType at = tableSymboles.getAdresseType($IDENTIFIANT.text); //On récupère l'@ de la variable X
             $code = $expression.code; //PUSHI x (qui peut aussi être le code de l'expression)
-            $code += "STOREG "+at.adresse+"\n"; //ON enregistre l'expression dans X
-        }
-    ;
-
-write returns [ String code ] 
-    :
-        'write(' var = expression ')'
-        {
-            $code += "PUSHG 0\n";
-            $code += "WRITE\n";
+            $code += "STOREG "+at.adresse+"\n"; //On stocke la valeur d'expression à l'@ de X
         }
     ;
 
