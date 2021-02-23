@@ -53,6 +53,12 @@ expression returns [ String code ]
         {
             $code = "PUSHI " + $f.text +"\n";
         }
+    | '-' f = ENTIER
+        {
+            $code = "PUSHI 0\n";
+            $code += "PUSHI "+$f.text+"\n";
+            $code += "SUB\n";
+        }
     | write
         {
             $code = $write.code;
