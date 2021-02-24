@@ -98,42 +98,6 @@ read returns [ String code ]
         }
     ;
 
-boucle returns [ String code ] 
-    : 'while(' a = expression operateur b = expression ')' c = expression
-        {
-            String boucle1 = getNewLabel();
-            String boucle2 = getNewLabel();
-            $code = "LABEL " + boucle1 + "\n";
-            $code += $a.code;
-            $code += $b.code;
-            $code += $operateur.code;
-            $code += "JUMPF "+ boucle2 + "\n";            
-            $code += $c.code;
-            $code += "JUMP "+ boucle1 + "\n";
-            $code += "LABEL "+ boucle2 + "\n";
-            $code += "WRITE \n";
-        }
-    | 'while(' condition ')' c = expression
-        {
-            String boucle1 = getNewLabel();
-            String boucle2 = getNewLabel();
-            $code = "LABEL " + boucle1 + "\n";
-            $code += $condition.code;
-            $code += $condition.code;
-            $code += "EQUAL\n";
-            $code += "JUMPF " + boucle2 + "\n";
-            $code += $c.code;
-            $code += "JUMP "+ boucle1 + "\n";
-            $code += "LABEL "+ boucle2 + "\n";
-            $code += "WRITE \n";
-        }
-    ;
-
-condition returns [String code]
-    : ('true' | '1')  { $code = "  PUSHI 1\n"; }
-    | ('false' | '0') { $code = "  PUSHI 0\n"; }
-    ;
-
 operateur returns [String code]
     : '>'  { $code = "SUP\n"; }
     | '>=' { $code = "SUPEQ\n"; }
@@ -141,6 +105,42 @@ operateur returns [String code]
     | '<=' { $code = "INFEQ\n"; }
     | '==' { $code = "EQUAL\n"; }
     | '!=' { $code = "NEQ\n"; }
+    ;
+
+condition returns [String code]
+    : ('true' | '1')  
+        {
+            $code = "PUSHI 1\n";
+            $code += "PUSHI 1\n";
+            $code += "EQUAL\n";
+        }
+    | ('false' | '0')
+        {
+            $code = "PUSHI 0\n";
+            $code += "PUSHI 0\n";
+            $code += "EQUAL\n";
+        }
+    | a = expression operateur b = expression
+        {
+            $code = $a.code;
+            $code += $b.code;
+            $code += $operateur.code;
+        }
+    ;
+
+boucle returns [ String code ] 
+    : 'while(' condition ')' a = expression
+        {
+            String boucle1 = getNewLabel();
+            String boucle2 = getNewLabel();
+            $code = "LABEL " + boucle1 + "\n";
+            $code += $condition.code;
+            $code += "JUMPF "+ boucle2 + "\n";            
+            $code += $a.code;
+            $code += "JUMP "+ boucle1 + "\n";
+            $code += "LABEL "+ boucle2 + "\n";
+            $code += "WRITE \n";
+        }
     ;
 
 decl returns [ String code ]

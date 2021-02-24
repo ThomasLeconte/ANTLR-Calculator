@@ -67,15 +67,15 @@ public interface CalcListener extends ParseTreeListener {
 	 */
 	void exitRead(CalcParser.ReadContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link CalcParser#boucle}.
+	 * Enter a parse tree produced by {@link CalcParser#operateur}.
 	 * @param ctx the parse tree
 	 */
-	void enterBoucle(CalcParser.BoucleContext ctx);
+	void enterOperateur(CalcParser.OperateurContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link CalcParser#boucle}.
+	 * Exit a parse tree produced by {@link CalcParser#operateur}.
 	 * @param ctx the parse tree
 	 */
-	void exitBoucle(CalcParser.BoucleContext ctx);
+	void exitOperateur(CalcParser.OperateurContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CalcParser#condition}.
 	 * @param ctx the parse tree
@@ -87,25 +87,15 @@ public interface CalcListener extends ParseTreeListener {
 	 */
 	void exitCondition(CalcParser.ConditionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link CalcParser#operateur}.
+	 * Enter a parse tree produced by {@link CalcParser#boucle}.
 	 * @param ctx the parse tree
 	 */
-	void enterOperateur(CalcParser.OperateurContext ctx);
+	void enterBoucle(CalcParser.BoucleContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link CalcParser#operateur}.
+	 * Exit a parse tree produced by {@link CalcParser#boucle}.
 	 * @param ctx the parse tree
 	 */
-	void exitOperateur(CalcParser.OperateurContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link CalcParser#logique}.
-	 * @param ctx the parse tree
-	 */
-	void enterLogique(CalcParser.LogiqueContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link CalcParser#logique}.
-	 * @param ctx the parse tree
-	 */
-	void exitLogique(CalcParser.LogiqueContext ctx);
+	void exitBoucle(CalcParser.BoucleContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CalcParser#decl}.
 	 * @param ctx the parse tree
