@@ -113,11 +113,25 @@ boucle returns [ String code ]
             $code += "LABEL "+ boucle2 + "\n";
             $code += "WRITE \n";
         }
+    | 'while(' condition ')' c = expression
+        {
+            String boucle1 = getNewLabel();
+            String boucle2 = getNewLabel();
+            $code = "LABEL " + boucle1 + "\n";
+            $code += $condition.code;
+            $code += $condition.code;
+            $code += "EQUAL\n";
+            $code += "JUMPF " + boucle2 + "\n";
+            $code += $c.code;
+            $code += "JUMP "+ boucle1 + "\n";
+            $code += "LABEL "+ boucle2 + "\n";
+            $code += "WRITE \n";
+        }
     ;
 
 condition returns [String code]
-    : 'true'  { $code = "  PUSHI 1\n"; }
-    | 'false' { $code = "  PUSHI 0\n"; }
+    : ('true' | '1')  { $code = "  PUSHI 1\n"; }
+    | ('false' | '0') { $code = "  PUSHI 0\n"; }
     ;
 
 operateur returns [String code]
