@@ -107,6 +107,11 @@ operateur returns [String code]
     | '!=' { $code = "NEQ\n"; }
     ;
 
+logique returns [String code]
+    : '&&' { $code = "&&"; }
+    | '||' {$code = "||"; }
+    ;
+
 condition returns [String code]
     : ('true' | '1')  
         {
@@ -125,6 +130,18 @@ condition returns [String code]
             $code = $a.code;
             $code += $b.code;
             $code += $operateur.code;
+        }
+    | c = condition logique d = condition
+        {
+            $code = $c.code;
+            if($logique.code.equals("&&")){
+                //...
+            }else if($logique.code.equals("||")){
+                //...
+            }else{
+                // pour "!"
+                //...
+            }
         }
     ;
 
