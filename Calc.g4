@@ -1,6 +1,12 @@
 grammar Calc;
 
-@members { private TableSymboles tableSymboles = new TableSymboles(); }
+@members {
+            private TableSymboles tableSymboles = new TableSymboles(); 
+            private int _cur_label = 1;
+            /** générateur de nom d'étiquettes pour les boucles */
+            private String getNewLabel() { return "B" +(_cur_label++); }
+            // ...
+        }
 
 start : 
         calcul EOF;
@@ -67,6 +73,14 @@ expression returns [ String code ]
         {
             $code = $read.code;
         }
+    | boucle
+        {
+            $code = $boucle.code;
+        }
+    | assignation
+        {
+            $code = $assignation.code;
+        }
     ;
 
 write returns [ String code ] 
@@ -82,6 +96,37 @@ read returns [ String code ]
         {
             $code = $expression.code;
         }
+    ;
+
+boucle returns [ String code ] 
+    : 'while(' a = expression operateur b = expression ')' c = expression
+        {
+            String boucle1 = getNewLabel();
+            String boucle2 = getNewLabel();
+            $code = "LABEL " + boucle1 + "\n";
+            $code += $a.code;
+            $code += $b.code;
+            $code += $operateur.code;
+            $code += "JUMPF "+ boucle2 + "\n";            
+            $code += $c.code;
+            $code += "JUMP "+ boucle1 + "\n";
+            $code += "LABEL "+ boucle2 + "\n";
+            $code += "WRITE \n";
+        }
+    ;
+
+condition returns [String code]
+    : 'true'  { $code = "  PUSHI 1\n"; }
+    | 'false' { $code = "  PUSHI 0\n"; }
+    ;
+
+operateur returns [String code]
+    : '>'  { $code = "SUP\n"; }
+    | '>=' { $code = "SUPEQ\n"; }
+    | '<' { $code = "INF\n"; }
+    | '<=' { $code = "INFEQ\n"; }
+    | '==' { $code = "EQUAL\n"; }
+    | '!=' { $code = "NEQ\n"; }
     ;
 
 decl returns [ String code ]

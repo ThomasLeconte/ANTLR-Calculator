@@ -1,0 +1,11 @@
+
+C:\Users\adri3\Desktop\th‚orie des langages\calculette>java org.antlr.v4.gui.TestRig Calc start -gui 
+Variable trouvée (de type int et de valeur PUSHI 23
+) !
+PUSHI 42
+PUSHI 0
+PUSHG 0
+PUSHI 3
+ADD
+  HALT
+
