@@ -55,9 +55,9 @@ expression returns [ String code ]
             AdresseType var = tableSymboles.getAdresseType($IDENTIFIANT.text);
             $code = "PUSHG "+var.adresse+"\n";
         }
-    | f = ENTIER
+    | ENTIER
         {
-            $code = "PUSHI " + $f.text +"\n";
+            $code = "PUSHI " + $ENTIER.text +"\n";
         }
     | '-' f = ENTIER
         {
@@ -77,10 +77,6 @@ expression returns [ String code ]
         {
             $code = $boucle.code;
         }
-    | assignation
-        {
-            $code = $assignation.code;
-        }
     | bloc
         {
             $code = $bloc.code;
@@ -88,9 +84,9 @@ expression returns [ String code ]
     ;
 
 bloc returns[ String code ]
-    : '{' NEWLINE expression* NEWLINE* '}'
+    : '{' NEWLINE instruction* NEWLINE* '}'
         {
-            $code = $expression.code;
+            $code = $instruction.code;
         }
     ;
 
@@ -124,13 +120,13 @@ logique returns [String code]
     ;
 
 condition returns [String code]
-    : ('true' | '1')  
+    : ('true')  
         {
             $code = "PUSHI 1\n";
             $code += "PUSHI 1\n";
             $code += "EQUAL\n";
         }
-    | ('false' | '0')
+    | ('false')
         {
             $code = "PUSHI 0\n";
             $code += "PUSHI 1\n";
@@ -214,7 +210,7 @@ NEWLINE : '\r'? '\n';
 
 WS :   (' '|'\t')+ -> skip  ;
 
-ENTIER : [0-9]+  ;
+ENTIER: ('0' ..'9')+;
 
 FLOAT : ENTIER+'.'ENTIER+ ;
 
