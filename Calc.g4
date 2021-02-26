@@ -81,6 +81,17 @@ expression returns [ String code ]
         {
             $code = $assignation.code;
         }
+    | bloc
+        {
+            $code = $bloc.code;
+        }
+    ;
+
+bloc returns[ String code ]
+    : '{' NEWLINE expression* NEWLINE* '}'
+        {
+            $code = $expression.code;
+        }
     ;
 
 write returns [ String code ] 
@@ -109,7 +120,7 @@ operateur returns [String code]
 
 logique returns [String code]
     : '&&' { $code = "&&"; }
-    | '||' {$code = "||"; }
+    | '||' { $code = "||"; }
     ;
 
 condition returns [String code]
@@ -122,7 +133,7 @@ condition returns [String code]
     | ('false' | '0')
         {
             $code = "PUSHI 0\n";
-            $code += "PUSHI 0\n";
+            $code += "PUSHI 1\n";
             $code += "EQUAL\n";
         }
     | a = expression operateur b = expression
@@ -150,13 +161,23 @@ boucle returns [ String code ]
         {
             String boucle1 = getNewLabel();
             String boucle2 = getNewLabel();
-            $code = "LABEL " + boucle1 + "\n";
-            $code += $condition.code;
-            $code += "JUMPF "+ boucle2 + "\n";            
-            $code += $a.code;
-            $code += "JUMP "+ boucle1 + "\n";
-            $code += "LABEL "+ boucle2 + "\n";
-            $code += "WRITE \n";
+            if($condition.text.equals("false")){
+                $code = "LABEL " + boucle1 + "\n";
+                $code += $condition.code;
+                $code += "JUMPF "+ boucle2 + "\n";
+                $code += "WRITE \n";
+                $code += "LABEL "+ boucle2 + "\n";
+                $code += $a.code;
+                $code += "JUMP "+ boucle1 + "\n";
+            }else{
+                $code = "LABEL " + boucle1 + "\n";
+                $code += $condition.code;
+                $code += "JUMPF "+ boucle2 + "\n";            
+                $code += $a.code;
+                $code += "JUMP "+ boucle1 + "\n";
+                $code += "LABEL "+ boucle2 + "\n";
+                $code += "WRITE \n";
+            }
         }
     ;
 
@@ -193,7 +214,9 @@ NEWLINE : '\r'? '\n';
 
 WS :   (' '|'\t')+ -> skip  ;
 
-ENTIER : ('0'..'9')+  ;
+ENTIER : [0-9]+  ;
+
+FLOAT : ENTIER+'.'ENTIER+ ;
 
 TYPE : 'int' | 'float' ;
 
