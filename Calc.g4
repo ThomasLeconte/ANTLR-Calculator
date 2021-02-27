@@ -132,44 +132,45 @@ condition returns [String code]
             String boucle1 = getNewLabel();
             String exit = getNewLabel();
 
-            //Declaration des deux variables de test, initialisées à 0
-            $code = "PUSHI 0\n"; //reservation
-            $code += "PUSHI 0\n"; //False par défaut
-            tableSymboles.putVar("test1", "int"); //On sauvegarde la variable
-            AdresseType at = tableSymboles.getAdresseType("test1");
-            $code += "STOREG "+at.adresse+"\n";
-
-            $code += "PUSHI 0\n"; //reservation
-            $code += "PUSHI 0\n"; //False par défaut
-            tableSymboles.putVar("test2", "int"); //On sauvegarde la variable
-            AdresseType at2 = tableSymboles.getAdresseType("test2");
-            $code += "STOREG "+at2.adresse+"\n";
-
             if($logique.code.equals("&&")){
-                $code += $c.code; //le code c renvoie en dernier 1 ou 0
-                $code += "STOREG "+at.adresse+"\n"; //on stocke le résultat de la première condition dans test1
-                $code += $d.code; //le code d renvoie en dernier 1 ou 0
-                $code += "STOREG "+at2.adresse+"\n"; //on stocke le résultat de la deuxième condition dans test2
-                $code += "PUSHG "+at.adresse+"\n"; //on envoie test1 en haut de la pile
+                $code = $c.code; //le code c renvoie en dernier 1 ou 0
                 $code += "PUSHI 1\n";
-                $code += "EQUAL\n"; //si test1 == 1 on va tester test2
-                $code += "JUMPF "+boucle1+"\n"; //Sinon on s'arrête là et on renvoie false (PUSHI 0)
-                $code += "PUSHG "+at2.adresse+"\n"; //on envoie test2 en haut de la pile
+                $code += "EQUAL\n";
+                $code += "JUMPF "+boucle1+"\n";
+                $code += $d.code;
                 $code += "PUSHI 1\n";
-                $code += "EQUAL\n"; //si test2 == 1 on renvoie true donc 1 car test1 et test2 sont égals à 1
-                $code += "JUMPF "+boucle1+"\n"; //Sinon on renvoie false (PUSHI 0)
+                $code += "EQUAL\n";
+                $code += "JUMPF "+boucle1+"\n";
                 $code += "PUSHI 1\n";
                 $code += "JUMP "+exit+"\n"; 
-                $code += "LABEL "+ boucle1 + "\n";
-                $code += "PUSHI 0\n"; //false
-                $code += "LABEL "+exit+"\n";
             }else if($logique.code.equals("||")){
-                // ...
+                String or = getNewLabel();
+                
+                //on test le premier
+                $code = $c.code;
+                $code += "PUSHI 1\n";
+                $code += "EQUAL\n";
+                $code += "JUMPF "+or+"\n"; //Si c'est faux on test la deuxième condition
+                $code += "PUSHI 1\n"; //Sinon on s'arrête là et on renvoie 1
+                $code += "JUMP "+exit+"\n";
+
+                //on test le second
+                $code += "LABEL "+or+"\n";
+                $code += $d.code;
+                $code += "PUSHI 1\n";
+                $code += "EQUAL\n"; //si c'est vrai on renvoie 1
+                $code += "JUMPF "+boucle1+"\n"; //sinon on renvoie 0
+                $code += "PUSHI 1\n";
+                $code += "JUMP "+exit+"\n"; 
             }else{
                 // !
                 // ...
             }
+            $code += "LABEL "+ boucle1 + "\n";
+            $code += "PUSHI 0\n"; //false
+            $code += "LABEL "+exit+"\n";
         }
+    | '(' condition ')' { $code = $condition.code; }
     ;
 
 boucle returns [ String code ] 
@@ -180,13 +181,10 @@ boucle returns [ String code ]
             
                 $code = "LABEL " + boucle1 + "\n";
                 $code += $condition.code;
-                $code += "JUMPF "+ boucle2 + "\n";            
+                $code += "JUMPF "+ boucle2 + "\n";
                 $code += $a.code;
                 $code += "JUMP "+ boucle1 + "\n";
                 $code += "LABEL "+ boucle2 + "\n";
-                $code += "WRITE \n";
-                $code += "POP \n";
-            
         }
     ;
 
@@ -228,6 +226,7 @@ write returns [ String code ]
         {
             $code = $expression.code;
             $code += "WRITE\n";
+            $code += "POP\n";
         }
     ;
 
