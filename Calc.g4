@@ -26,29 +26,33 @@ calcul returns [ String code ]
     ;
 
 instruction returns [ String code ] 
-    : assignation finInstruction 
+    : expression finInstruction 
         { 
-            $code = $assignation.code;
+            $code = $expression.code;
         }
-    | expression finInstruction
+    | assignation finInstruction
         { 
-		    $code= $expression.code;
+		    $code = $assignation.code;
         }
     ;
 
 expression returns [ String code ]
     : a = expression op = ( '/' | '*' ) b = expression 
-        {if($op.text.equals("/")){
-            $code = $a.code + $b.code + "DIV\n"; 
-        }else{ 
-            $code = $a.code + $b.code + "MUL\n";
-        }}
+        {
+            if($op.text.equals("/")){
+                $code = $a.code + $b.code + "DIV\n"; 
+            }else{ 
+                $code = $a.code + $b.code + "MUL\n";
+            }
+        }
     | c = expression op = ( '+' | '-' ) d = expression 
-        {if($op.text.equals("+")){
-            $code = $c.code + $d.code + "ADD\n"; 
-        }else{ 
-            $code = $c.code + $d.code + "SUB\n";
-        }}
+        {
+            if($op.text.equals("+")){
+                $code = $c.code + $d.code + "ADD\n"; 
+            }else{ 
+                $code = $c.code + $d.code + "SUB\n";
+            }
+        }
     | '(' e = expression ')' {$code = $e.code;}
     | IDENTIFIANT
         {
@@ -83,29 +87,6 @@ expression returns [ String code ]
         }
     ;
 
-bloc returns[ String code ]
-    : '{' NEWLINE instruction* c = NEWLINE* '}'
-        {
-            $code = $instruction.code;
-            
-        }
-    ;
-
-write returns [ String code ] 
-    : 'write(' expression ')'
-        {
-            $code = $expression.code;
-            $code += "WRITE\n";
-        }
-    ;
-
-read returns [ String code ]
-    : 'read(' expression ')'
-        {
-            $code = $expression.code;
-        }
-    ;
-
 operateur returns [String code]
     : '>'  { $code = "SUP\n"; }
     | '>=' { $code = "SUPEQ\n"; }
@@ -124,14 +105,10 @@ condition returns [String code]
     : ('true')  
         {
             $code = "PUSHI 1\n";
-            $code += "PUSHI 1\n";
-            $code += "EQUAL\n";
         }
     | ('false')
         {
-            $code = "PUSHI 2\n";
-            $code += "PUSHI 1\n";
-            $code += "EQUAL\n";
+            $code = "PUSHI 0\n";
         }
     | a = expression operateur b = expression
         {
@@ -219,6 +196,28 @@ assignation returns [ String code ]
             AdresseType at = tableSymboles.getAdresseType($IDENTIFIANT.text); //On récupère l'@ de la variable X
             $code = $expression.code; //PUSHI x (qui peut aussi être le code de l'expression)
             $code += "STOREG "+at.adresse+"\n"; //On stocke la valeur d'expression à l'@ de X
+        }
+    ;
+
+bloc returns[ String code ]
+    : '{' NEWLINE instruction* NEWLINE* '}'
+        {
+            $code = $instruction.code;
+        }
+    ;
+
+write returns [ String code ] 
+    : 'write(' expression ')'
+        {
+            $code = $expression.code;
+            $code += "WRITE\n";
+        }
+    ;
+
+read returns [ String code ]
+    : 'read(' expression ')'
+        {
+            $code = $expression.code;
         }
     ;
 

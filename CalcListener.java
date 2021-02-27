@@ -47,36 +47,6 @@ public interface CalcListener extends ParseTreeListener {
 	 */
 	void exitExpression(CalcParser.ExpressionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link CalcParser#bloc}.
-	 * @param ctx the parse tree
-	 */
-	void enterBloc(CalcParser.BlocContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link CalcParser#bloc}.
-	 * @param ctx the parse tree
-	 */
-	void exitBloc(CalcParser.BlocContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link CalcParser#write}.
-	 * @param ctx the parse tree
-	 */
-	void enterWrite(CalcParser.WriteContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link CalcParser#write}.
-	 * @param ctx the parse tree
-	 */
-	void exitWrite(CalcParser.WriteContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link CalcParser#read}.
-	 * @param ctx the parse tree
-	 */
-	void enterRead(CalcParser.ReadContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link CalcParser#read}.
-	 * @param ctx the parse tree
-	 */
-	void exitRead(CalcParser.ReadContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link CalcParser#operateur}.
 	 * @param ctx the parse tree
 	 */
@@ -136,6 +106,36 @@ public interface CalcListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAssignation(CalcParser.AssignationContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CalcParser#bloc}.
+	 * @param ctx the parse tree
+	 */
+	void enterBloc(CalcParser.BlocContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CalcParser#bloc}.
+	 * @param ctx the parse tree
+	 */
+	void exitBloc(CalcParser.BlocContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CalcParser#write}.
+	 * @param ctx the parse tree
+	 */
+	void enterWrite(CalcParser.WriteContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CalcParser#write}.
+	 * @param ctx the parse tree
+	 */
+	void exitWrite(CalcParser.WriteContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CalcParser#read}.
+	 * @param ctx the parse tree
+	 */
+	void enterRead(CalcParser.ReadContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CalcParser#read}.
+	 * @param ctx the parse tree
+	 */
+	void exitRead(CalcParser.ReadContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CalcParser#finInstruction}.
 	 * @param ctx the parse tree
