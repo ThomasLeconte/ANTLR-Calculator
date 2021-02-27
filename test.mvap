@@ -1,7 +1,19 @@
 
-D:\Licence 3\Semestre 2\language compilation\TP\TP5>java org.antlr.v4.gui.TestRig Calc start -gui 
 PUSHI 0
-PUSHI 0
+PUSHI 6
 STOREG 0
+LABEL B1
+PUSHG 0
+PUSHI 10
+INF
+JUMPF B2
+PUSHG 0
+PUSHI 1
+ADD
+STOREG 0
+JUMP B1
+LABEL B2
+POP 
+WRITE 
 HALT
 

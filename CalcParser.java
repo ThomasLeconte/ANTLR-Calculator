@@ -253,16 +253,16 @@ public class CalcParser extends Parser {
 
 	public static class InstructionContext extends ParserRuleContext {
 		public String code;
-		public ExpressionContext expression;
 		public AssignationContext assignation;
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
+		public ExpressionContext expression;
+		public AssignationContext assignation() {
+			return getRuleContext(AssignationContext.class,0);
 		}
 		public FinInstructionContext finInstruction() {
 			return getRuleContext(FinInstructionContext.class,0);
 		}
-		public AssignationContext assignation() {
-			return getRuleContext(AssignationContext.class,0);
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
 		}
 		public InstructionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -289,11 +289,11 @@ public class CalcParser extends Parser {
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(55);
-				((InstructionContext)_localctx).expression = expression(0);
+				((InstructionContext)_localctx).assignation = assignation();
 				setState(56);
 				finInstruction();
 				 
-				            ((InstructionContext)_localctx).code =  ((InstructionContext)_localctx).expression.code;
+				            ((InstructionContext)_localctx).code =  ((InstructionContext)_localctx).assignation.code;
 				        
 				}
 				break;
@@ -301,11 +301,11 @@ public class CalcParser extends Parser {
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(59);
-				((InstructionContext)_localctx).assignation = assignation();
+				((InstructionContext)_localctx).expression = expression(0);
 				setState(60);
 				finInstruction();
 				 
-						    ((InstructionContext)_localctx).code =  ((InstructionContext)_localctx).assignation.code;
+						    ((InstructionContext)_localctx).code =  ((InstructionContext)_localctx).expression.code;
 				        
 				}
 				break;
@@ -563,6 +563,7 @@ public class CalcParser extends Parser {
 	public static class BlocContext extends ParserRuleContext {
 		public String code;
 		public InstructionContext instruction;
+		public Token c;
 		public List<TerminalNode> NEWLINE() { return getTokens(CalcParser.NEWLINE); }
 		public TerminalNode NEWLINE(int i) {
 			return getToken(CalcParser.NEWLINE, i);
@@ -619,7 +620,7 @@ public class CalcParser extends Parser {
 				{
 				{
 				setState(115);
-				match(NEWLINE);
+				((BlocContext)_localctx).c = match(NEWLINE);
 				}
 				}
 				setState(120);
@@ -630,6 +631,7 @@ public class CalcParser extends Parser {
 			match(T__7);
 
 			            ((BlocContext)_localctx).code =  ((BlocContext)_localctx).instruction.code;
+			            
 			        
 			}
 		}
@@ -959,7 +961,7 @@ public class CalcParser extends Parser {
 				match(T__19);
 				}
 
-				            ((ConditionContext)_localctx).code =  "PUSHI 0\n";
+				            ((ConditionContext)_localctx).code =  "PUSHI 2\n";
 				            _localctx.code += "PUSHI 1\n";
 				            _localctx.code += "EQUAL\n";
 				        
@@ -1012,8 +1014,10 @@ public class CalcParser extends Parser {
 					((ConditionContext)_localctx).d = condition(2);
 
 					                      ((ConditionContext)_localctx).code =  ((ConditionContext)_localctx).c.code;
+					                      String boucle1 = getNewLabel();
 					                      if(((ConditionContext)_localctx).logique.code.equals("&&")){
-					                          //...
+					                          _localctx.code += "LABEL " + boucle1 + "\n";
+
 					                      }else if(((ConditionContext)_localctx).logique.code.equals("||")){
 					                          //...
 					                      }else{
@@ -1044,12 +1048,12 @@ public class CalcParser extends Parser {
 	public static class BoucleContext extends ParserRuleContext {
 		public String code;
 		public ConditionContext condition;
-		public ExpressionContext a;
+		public InstructionContext a;
 		public ConditionContext condition() {
 			return getRuleContext(ConditionContext.class,0);
 		}
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
+		public InstructionContext instruction() {
+			return getRuleContext(InstructionContext.class,0);
 		}
 		public BoucleContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1078,27 +1082,20 @@ public class CalcParser extends Parser {
 			setState(178);
 			match(T__5);
 			setState(179);
-			((BoucleContext)_localctx).a = expression(0);
+			((BoucleContext)_localctx).a = instruction();
 
 			            String boucle1 = getNewLabel();
 			            String boucle2 = getNewLabel();
-			            if((((BoucleContext)_localctx).condition!=null?_input.getText(((BoucleContext)_localctx).condition.start,((BoucleContext)_localctx).condition.stop):null).equals("false")){
-			                ((BoucleContext)_localctx).code =  "LABEL " + boucle1 + "\n";
-			                _localctx.code += ((BoucleContext)_localctx).condition.code;
-			                _localctx.code += "JUMPF "+ boucle2 + "\n";
-			                _localctx.code += "WRITE \n";
-			                _localctx.code += "LABEL "+ boucle2 + "\n";
-			                _localctx.code += ((BoucleContext)_localctx).a.code;
-			                _localctx.code += "JUMP "+ boucle1 + "\n";
-			            }else{
+			            
 			                ((BoucleContext)_localctx).code =  "LABEL " + boucle1 + "\n";
 			                _localctx.code += ((BoucleContext)_localctx).condition.code;
 			                _localctx.code += "JUMPF "+ boucle2 + "\n";            
 			                _localctx.code += ((BoucleContext)_localctx).a.code;
 			                _localctx.code += "JUMP "+ boucle1 + "\n";
 			                _localctx.code += "LABEL "+ boucle2 + "\n";
+			                _localctx.code += "POP \n";
 			                _localctx.code += "WRITE \n";
-			            }
+			            
 			        
 			}
 		}
@@ -1367,8 +1364,8 @@ public class CalcParser extends Parser {
 		"\2&\'\3\2\2\2\',\3\2\2\2(&\3\2\2\2)+\7\32\2\2*)\3\2\2\2+.\3\2\2\2,*\3"+
 		"\2\2\2,-\3\2\2\2-\64\3\2\2\2.,\3\2\2\2/\60\5\6\4\2\60\61\b\3\1\2\61\63"+
 		"\3\2\2\2\62/\3\2\2\2\63\66\3\2\2\2\64\62\3\2\2\2\64\65\3\2\2\2\65\67\3"+
-		"\2\2\2\66\64\3\2\2\2\678\b\3\1\28\5\3\2\2\29:\5\b\5\2:;\5\34\17\2;<\b"+
-		"\4\1\2<B\3\2\2\2=>\5\32\16\2>?\5\34\17\2?@\b\4\1\2@B\3\2\2\2A9\3\2\2\2"+
+		"\2\2\2\66\64\3\2\2\2\678\b\3\1\28\5\3\2\2\29:\5\32\16\2:;\5\34\17\2;<"+
+		"\b\4\1\2<B\3\2\2\2=>\5\b\5\2>?\5\34\17\2?@\b\4\1\2@B\3\2\2\2A9\3\2\2\2"+
 		"A=\3\2\2\2B\7\3\2\2\2CD\b\5\1\2DE\7\7\2\2EF\5\b\5\2FG\7\b\2\2GH\b\5\1"+
 		"\2H]\3\2\2\2IJ\7\37\2\2J]\b\5\1\2KL\7\34\2\2L]\b\5\1\2MN\7\6\2\2NO\7\34"+
 		"\2\2O]\b\5\1\2PQ\5\f\7\2QR\b\5\1\2R]\3\2\2\2ST\5\16\b\2TU\b\5\1\2U]\3"+
@@ -1397,7 +1394,7 @@ public class CalcParser extends Parser {
 		"\u00aa\5\22\n\2\u00aa\u00ab\5\24\13\4\u00ab\u00ac\b\13\1\2\u00ac\u00ae"+
 		"\3\2\2\2\u00ad\u00a8\3\2\2\2\u00ae\u00b1\3\2\2\2\u00af\u00ad\3\2\2\2\u00af"+
 		"\u00b0\3\2\2\2\u00b0\25\3\2\2\2\u00b1\u00af\3\2\2\2\u00b2\u00b3\7\27\2"+
-		"\2\u00b3\u00b4\5\24\13\2\u00b4\u00b5\7\b\2\2\u00b5\u00b6\5\b\5\2\u00b6"+
+		"\2\u00b3\u00b4\5\24\13\2\u00b4\u00b5\7\b\2\2\u00b5\u00b6\5\6\4\2\u00b6"+
 		"\u00b7\b\f\1\2\u00b7\27\3\2\2\2\u00b8\u00b9\7\36\2\2\u00b9\u00ba\7\37"+
 		"\2\2\u00ba\u00bb\5\34\17\2\u00bb\u00bc\b\r\1\2\u00bc\u00c5\3\2\2\2\u00bd"+
 		"\u00be\7\36\2\2\u00be\u00bf\7\37\2\2\u00bf\u00c0\7\30\2\2\u00c0\u00c1"+

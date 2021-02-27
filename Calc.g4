@@ -26,13 +26,13 @@ calcul returns [ String code ]
     ;
 
 instruction returns [ String code ] 
-    : expression finInstruction 
+    : assignation finInstruction 
         { 
-            $code = $expression.code;
+            $code = $assignation.code;
         }
-    | assignation finInstruction
+    | expression finInstruction
         { 
-		    $code= $assignation.code;
+		    $code= $expression.code;
         }
     ;
 
@@ -84,9 +84,10 @@ expression returns [ String code ]
     ;
 
 bloc returns[ String code ]
-    : '{' NEWLINE instruction* NEWLINE* '}'
+    : '{' NEWLINE instruction* c = NEWLINE* '}'
         {
             $code = $instruction.code;
+            
         }
     ;
 
@@ -128,7 +129,7 @@ condition returns [String code]
         }
     | ('false')
         {
-            $code = "PUSHI 0\n";
+            $code = "PUSHI 2\n";
             $code += "PUSHI 1\n";
             $code += "EQUAL\n";
         }
@@ -138,34 +139,51 @@ condition returns [String code]
             $code += $b.code;
             $code += $operateur.code;
         }
-    | c = condition logique d = condition
+    | c = condition logique d = condition 
         {
-            $code = $c.code;
+            String condition2 = getNewLabel();
+            String fin = getNewLabel();
+            AdresseType test1 = tableSymboles.getAdresseType("test1"); 
+            AdresseType test2 = tableSymboles.getAdresseType("test2");//on initialise les variables test à faux de base
+            $code = "PUSHI 1"; 
+            $code += "STOREG "+test1.adresse+"\n";
+            $code = "PUSHI 2"; 
+            $code += "STOREG "+test2.adresse+"\n";
+            $code += $c.code;
             if($logique.code.equals("&&")){
-                //...
+                $code += "JUMPF "+fin+"\n"; // si c'est faux, on va direct à la fin
+                $code += $d.code;
+                $code += "JUMPF "+fin+"\n"; 
+                $code += "PUSHI 1" + "\n"; //si c'est vrai, on fait en sorte que le test de fin return true
+                $code += "STOREG "+test2.adresse+"\n";               
             }else if($logique.code.equals("||")){
-                //...
+                $code += "JUMPF "+condition2+"\n";
+                $code += "PUSHI 2"+ "\n"; //si c'est vrai, on fait en sorte que le test de fin return true
+                $code += "STOREG "+test1.adresse+"\n"; 
+                $code += "JUMP " +fin+"\n";//si le premier est vrai, on va direct faire le test
+                $code += "LABEL " + condition2 + "\n";
+                $code += $d.code;
+                $code += "JUMPF "+fin+"\n";
+                $code += "PUSHI 1" + "\n"; //si c'est vrai, on fait en sorte que le test de fin return true
+                $code += "STOREG "+test2.adresse+"\n"; 
+                $code += "JUMP " +fin+"\n";
             }else{
                 // pour "!"
                 //...
             }
+            $code += "LABEL " + fin + "\n";
+            $code += "PUSHG " + test1.adresse + "\n";
+            $code += "PUSHG " + test2.adresse + "\n";
+            $code += $code += "EQUAL\n";
         }
     ;
 
 boucle returns [ String code ] 
-    : 'while(' condition ')' a = expression
+    : 'while(' condition ')' a = instruction
         {
             String boucle1 = getNewLabel();
             String boucle2 = getNewLabel();
-            if($condition.text.equals("false")){
-                $code = "LABEL " + boucle1 + "\n";
-                $code += $condition.code;
-                $code += "JUMPF "+ boucle2 + "\n";
-                $code += "WRITE \n";
-                $code += "LABEL "+ boucle2 + "\n";
-                $code += $a.code;
-                $code += "JUMP "+ boucle1 + "\n";
-            }else{
+            
                 $code = "LABEL " + boucle1 + "\n";
                 $code += $condition.code;
                 $code += "JUMPF "+ boucle2 + "\n";            
@@ -173,7 +191,8 @@ boucle returns [ String code ]
                 $code += "JUMP "+ boucle1 + "\n";
                 $code += "LABEL "+ boucle2 + "\n";
                 $code += "WRITE \n";
-            }
+                $code += "POP \n";
+            
         }
     ;
 
