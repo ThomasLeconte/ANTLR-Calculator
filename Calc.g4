@@ -22,6 +22,8 @@ calcul returns [ String code ]
         
         (instruction { $code += $instruction.code; })*
 
+        NEWLINE*
+
         { $code += "HALT\n"; } 
     ;
 
@@ -112,46 +114,57 @@ condition returns [String code]
         }
     | a = expression operateur b = expression
         {
+            String boucle1 = getNewLabel();
             $code = $a.code;
             $code += $b.code;
             $code += $operateur.code;
+            $code += "JUMPF "+boucle1+"\n";
+            $code += "PUSHI 1\n";
+            $code += "LABEL "+ boucle1 + "\n";
+            $code += "PUSHI 0\n";
         }
-    | c = condition logique d = condition 
+    | c = condition logique d = condition
         {
-            String condition2 = getNewLabel();
-            String fin = getNewLabel();
-            AdresseType test1 = tableSymboles.getAdresseType("test1"); 
-            AdresseType test2 = tableSymboles.getAdresseType("test2");//on initialise les variables test à faux de base
-            $code = "PUSHI 1"; 
-            $code += "STOREG "+test1.adresse+"\n";
-            $code = "PUSHI 2"; 
-            $code += "STOREG "+test2.adresse+"\n";
-            $code += $c.code;
+            String boucle1 = getNewLabel();
+            String exit = getNewLabel();
+
+            //Declaration des deux variables de test, initialisées à 0
+            $code = "PUSHI 0\n"; //reservation
+            $code += "PUSHI 0\n"; //False par défaut
+            tableSymboles.putVar("test1", "int"); //On sauvegarde la variable
+            AdresseType at = tableSymboles.getAdresseType("test1");
+            $code += "STOREG "+at.adresse+"\n";
+
+            $code += "PUSHI 0\n"; //reservation
+            $code += "PUSHI 0\n"; //False par défaut
+            tableSymboles.putVar("test2", "int"); //On sauvegarde la variable
+            AdresseType at2 = tableSymboles.getAdresseType("test2");
+            $code += "STOREG "+at2.adresse+"\n";
+
             if($logique.code.equals("&&")){
-                $code += "JUMPF "+fin+"\n"; // si c'est faux, on va direct à la fin
-                $code += $d.code;
-                $code += "JUMPF "+fin+"\n"; 
-                $code += "PUSHI 1" + "\n"; //si c'est vrai, on fait en sorte que le test de fin return true
-                $code += "STOREG "+test2.adresse+"\n";               
+                $code += $c.code; //le code c renvoie en dernier 1 ou 0
+                $code += "STOREG "+at.adresse+"\n"; //on stocke le résultat de la première condition dans test1
+                $code += $d.code; //le code d renvoie en dernier 1 ou 0
+                $code += "STOREG "+at2.adresse+"\n"; //on stocke le résultat de la deuxième condition dans test2
+                $code += "PUSHG "+at.adresse+"\n"; //on envoie test1 en haut de la pile
+                $code += "PUSHI 1\n";
+                $code += "EQUAL\n"; //si test1 == 1 on va tester test2
+                $code += "JUMPF "+boucle1+"\n"; //Sinon on s'arrête là et on renvoie false (PUSHI 0)
+                $code += "PUSHG "+at2.adresse+"\n"; //on envoie test2 en haut de la pile
+                $code += "PUSHI 1\n";
+                $code += "EQUAL\n"; //si test2 == 1 on renvoie true donc 1 car test1 et test2 sont égals à 1
+                $code += "JUMPF "+boucle1+"\n"; //Sinon on renvoie false (PUSHI 0)
+                $code += "PUSHI 1\n";
+                $code += "JUMP "+exit+"\n"; 
+                $code += "LABEL "+ boucle1 + "\n";
+                $code += "PUSHI 0\n"; //false
+                $code += "LABEL "+exit+"\n";
             }else if($logique.code.equals("||")){
-                $code += "JUMPF "+condition2+"\n";
-                $code += "PUSHI 2"+ "\n"; //si c'est vrai, on fait en sorte que le test de fin return true
-                $code += "STOREG "+test1.adresse+"\n"; 
-                $code += "JUMP " +fin+"\n";//si le premier est vrai, on va direct faire le test
-                $code += "LABEL " + condition2 + "\n";
-                $code += $d.code;
-                $code += "JUMPF "+fin+"\n";
-                $code += "PUSHI 1" + "\n"; //si c'est vrai, on fait en sorte que le test de fin return true
-                $code += "STOREG "+test2.adresse+"\n"; 
-                $code += "JUMP " +fin+"\n";
+                // ...
             }else{
-                // pour "!"
-                //...
+                // !
+                // ...
             }
-            $code += "LABEL " + fin + "\n";
-            $code += "PUSHG " + test1.adresse + "\n";
-            $code += "PUSHG " + test2.adresse + "\n";
-            $code += $code += "EQUAL\n";
         }
     ;
 
