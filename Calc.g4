@@ -115,13 +115,17 @@ condition returns [String code]
     | a = expression operateur b = expression
         {
             String boucle1 = getNewLabel();
+            String exit = getNewLabel();
             $code = $a.code;
             $code += $b.code;
             $code += $operateur.code;
             $code += "JUMPF "+boucle1+"\n";
             $code += "PUSHI 1\n";
+            $code += "JUMP "+exit+"\n";
             $code += "LABEL "+ boucle1 + "\n";
             $code += "PUSHI 0\n";
+            $code += "LABEL "+exit+"\n";
+
         }
     | c = condition logique d = condition
         {

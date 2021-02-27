@@ -52,7 +52,7 @@ Pour exécuter du code mvap, il faut :
 
 1. Assembler :
 ```
- $ java MVaPAssembler add.mvap
+ $ java MVaPAssembler test.mvap
 ```
      ou avec des traces :
 ```
@@ -66,7 +66,7 @@ Pour exécuter du code mvap, il faut :
 ```
      ou pour mieux comprendre avec des traces :
 ```
- $ java CBaP -d add.mvap.cbap
+ $ java CBaP -d test.mvap.cbap
 ``` 
 
 Utiliser la MVàP via le jar

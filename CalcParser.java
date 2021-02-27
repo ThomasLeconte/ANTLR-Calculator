@@ -818,13 +818,17 @@ public class CalcParser extends Parser {
 				((ConditionContext)_localctx).b = expression(0);
 
 				            String boucle1 = getNewLabel();
+				            String exit = getNewLabel();
 				            ((ConditionContext)_localctx).code =  ((ConditionContext)_localctx).a.code;
 				            _localctx.code += ((ConditionContext)_localctx).b.code;
 				            _localctx.code += ((ConditionContext)_localctx).operateur.code;
 				            _localctx.code += "JUMPF "+boucle1+"\n";
 				            _localctx.code += "PUSHI 1\n";
+				            _localctx.code += "JUMP "+exit+"\n";
 				            _localctx.code += "LABEL "+ boucle1 + "\n";
 				            _localctx.code += "PUSHI 0\n";
+				            _localctx.code += "LABEL "+exit+"\n";
+
 				        
 				}
 				break;
