@@ -143,7 +143,7 @@ condition returns [String code]
                 $code += "JUMPF "+boucle1+"\n";
                 $code += "PUSHI 1\n";
                 $code += "JUMP "+exit+"\n"; 
-            }else if($logique.code.equals("||")){
+            }else{ //OPERATEUR ||
                 String or = getNewLabel();
                 
                 //on test le premier
@@ -162,10 +162,22 @@ condition returns [String code]
                 $code += "JUMPF "+boucle1+"\n"; //sinon on renvoie 0
                 $code += "PUSHI 1\n";
                 $code += "JUMP "+exit+"\n"; 
-            }else{
-                // !
-                // ...
             }
+            $code += "LABEL "+ boucle1 + "\n";
+            $code += "PUSHI 0\n"; //false
+            $code += "LABEL "+exit+"\n";
+        }
+    | '!' (condition | '(' condition ')')
+        {
+            String boucle1 = getNewLabel();
+            String exit = getNewLabel();
+
+            $code = $condition.code;
+            $code += "PUSHI 0\n"; //On test si la négation de condition est égale à 0 (false)
+            $code += "EQUAL \n";
+            $code += "JUMPF "+boucle1+"\n";
+            $code += "PUSHI 1\n";
+            $code += "JUMP "+exit+"\n";
             $code += "LABEL "+ boucle1 + "\n";
             $code += "PUSHI 0\n"; //false
             $code += "LABEL "+exit+"\n";
@@ -211,6 +223,21 @@ assignation returns [ String code ]
             AdresseType at = tableSymboles.getAdresseType($IDENTIFIANT.text); //On récupère l'@ de la variable X
             $code = $expression.code; //PUSHI x (qui peut aussi être le code de l'expression)
             $code += "STOREG "+at.adresse+"\n"; //On stocke la valeur d'expression à l'@ de X
+        }
+    | IDENTIFIANT operator = ( '++'| '--' )
+        {
+            AdresseType at = tableSymboles.getAdresseType($IDENTIFIANT.text);
+            $code = "PUSHG "+at.adresse+"\n";
+            if($operator.text.equals("++")){
+                $code += "PUSHI 1\n";
+                $code += "ADD\n";
+                $code += "STOREG "+at.adresse+"\n"; //On stocke la valeur d'expression à l'@ de X
+            }else{
+                $code += "PUSHI 1\n";
+                $code += "SUB\n";
+                $code += "STOREG "+at.adresse+"\n"; //On stocke la valeur d'expression à l'@ de X
+            }
+
         }
     ;
 
