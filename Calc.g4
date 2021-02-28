@@ -167,7 +167,7 @@ condition returns [String code]
             $code += "PUSHI 0\n"; //false
             $code += "LABEL "+exit+"\n";
         }
-    | '!' (condition | '(' condition ')')
+    | '!' condition
         {
             String boucle1 = getNewLabel();
             String exit = getNewLabel();
