@@ -22,8 +22,6 @@ calcul returns [ String code ]
         
         (instruction { $code += $instruction.code; })*
 
-        NEWLINE*
-
         { $code += "HALT\n"; } 
     ;
 
@@ -35,6 +33,22 @@ instruction returns [ String code ]
     | assignation finInstruction
         { 
 		    $code = $assignation.code;
+        }
+    | write finInstruction
+        {
+            $code = $write.code;
+        }
+    | read finInstruction
+        {
+            $code = $read.code;
+        }
+    | boucle finInstruction
+        {
+            $code = $boucle.code;
+        }
+    | bloc finInstruction
+        {
+            $code = $bloc.code;
         }
     ;
 
@@ -71,21 +85,46 @@ expression returns [ String code ]
             $code += "PUSHI "+$f.text+"\n";
             $code += "SUB\n";
         }
-    | write
+    ;
+
+decl returns [ String code ]
+    : TYPE IDENTIFIANT finInstruction
         {
-            $code = $write.code;
+            $code = "PUSHI 0\n";
+            tableSymboles.putVar($IDENTIFIANT.text, $TYPE.text);
         }
-    | read
+
+    | TYPE IDENTIFIANT '=' expression finInstruction
         {
-            $code = $read.code;
+            $code = "PUSHI 0\n";
+            $code += $expression.code; //PUSHI x
+            tableSymboles.putVar($IDENTIFIANT.text, $TYPE.text); //On sauvegarde la variable
+            AdresseType at = tableSymboles.getAdresseType($IDENTIFIANT.text);
+            $code += "STOREG "+at.adresse+"\n";
         }
-    | boucle
+    ; 
+
+assignation returns [ String code ] 
+    : IDENTIFIANT '=' expression
         {
-            $code = $boucle.code;
+            AdresseType at = tableSymboles.getAdresseType($IDENTIFIANT.text); //On récupère l'@ de la variable X
+            $code = $expression.code; //PUSHI x (qui peut aussi être le code de l'expression)
+            $code += "STOREG "+at.adresse+"\n"; //On stocke la valeur d'expression à l'@ de X
         }
-    | bloc
+    | IDENTIFIANT operator = ( '++'| '--' )
         {
-            $code = $bloc.code;
+            AdresseType at = tableSymboles.getAdresseType($IDENTIFIANT.text);
+            $code = "PUSHG "+at.adresse+"\n";
+            if($operator.text.equals("++")){
+                $code += "PUSHI 1\n";
+                $code += "ADD\n";
+                $code += "STOREG "+at.adresse+"\n"; //On stocke la valeur d'expression à l'@ de X
+            }else{
+                $code += "PUSHI 1\n";
+                $code += "SUB\n";
+                $code += "STOREG "+at.adresse+"\n"; //On stocke la valeur d'expression à l'@ de X
+            }
+
         }
     ;
 
@@ -197,47 +236,6 @@ boucle returns [ String code ]
                 $code += $a.code;
                 $code += "JUMP "+ boucle1 + "\n";
                 $code += "LABEL "+ boucle2 + "\n";
-        }
-    ;
-
-decl returns [ String code ]
-    : TYPE IDENTIFIANT finInstruction
-        {
-            $code = "PUSHI 0\n";
-            tableSymboles.putVar($IDENTIFIANT.text, $TYPE.text);
-        }
-
-    | TYPE IDENTIFIANT '=' expression finInstruction
-        {
-            $code = "PUSHI 0\n";
-            $code += $expression.code; //PUSHI x
-            tableSymboles.putVar($IDENTIFIANT.text, $TYPE.text); //On sauvegarde la variable
-            AdresseType at = tableSymboles.getAdresseType($IDENTIFIANT.text);
-            $code += "STOREG "+at.adresse+"\n";
-        }
-    ; 
-
-assignation returns [ String code ] 
-    : IDENTIFIANT '=' expression
-        {
-            AdresseType at = tableSymboles.getAdresseType($IDENTIFIANT.text); //On récupère l'@ de la variable X
-            $code = $expression.code; //PUSHI x (qui peut aussi être le code de l'expression)
-            $code += "STOREG "+at.adresse+"\n"; //On stocke la valeur d'expression à l'@ de X
-        }
-    | IDENTIFIANT operator = ( '++'| '--' )
-        {
-            AdresseType at = tableSymboles.getAdresseType($IDENTIFIANT.text);
-            $code = "PUSHG "+at.adresse+"\n";
-            if($operator.text.equals("++")){
-                $code += "PUSHI 1\n";
-                $code += "ADD\n";
-                $code += "STOREG "+at.adresse+"\n"; //On stocke la valeur d'expression à l'@ de X
-            }else{
-                $code += "PUSHI 1\n";
-                $code += "SUB\n";
-                $code += "STOREG "+at.adresse+"\n"; //On stocke la valeur d'expression à l'@ de X
-            }
-
         }
     ;
 
