@@ -34,22 +34,31 @@ instruction returns [ String code ]
         { 
 		    $code = $assignation.code;
         }
-    | write finInstruction
+    | write
         {
             $code = $write.code;
         }
-    | read finInstruction
+    | read
         {
             $code = $read.code;
         }
-    | boucle finInstruction
+    | boucle
         {
             $code = $boucle.code;
         }
-    | bloc finInstruction
+    | bloc
         {
             $code = $bloc.code;
         }
+    | ifCondition
+        {
+            $code = $ifCondition.code;
+        }
+    ;
+
+bloc returns[ String code ]
+@init{ $code = new String(); }
+    : '{' NEWLINE+ (instruction { $code += $instruction.code; })* '}' NEWLINE*
     ;
 
 expression returns [ String code ]
@@ -230,19 +239,39 @@ boucle returns [ String code ]
             String boucle1 = getNewLabel();
             String boucle2 = getNewLabel();
             
-                $code = "LABEL " + boucle1 + "\n";
-                $code += $condition.code;
-                $code += "JUMPF "+ boucle2 + "\n";
-                $code += $a.code;
-                $code += "JUMP "+ boucle1 + "\n";
-                $code += "LABEL "+ boucle2 + "\n";
+            $code = "LABEL " + boucle1 + "\n";
+            $code += $condition.code;
+            $code += "JUMPF "+ boucle2 + "\n";
+            $code += $a.code;
+            $code += "JUMP "+ boucle1 + "\n";
+            $code += "LABEL "+ boucle2 + "\n";
         }
     ;
 
-bloc returns[ String code ]
-    : '{' NEWLINE instruction* NEWLINE* '}'
+ifCondition returns [ String code ]
+    : 'if(' condition ')' a = instruction 'else' b = instruction
         {
-            $code = $instruction.code;
+            String elseArea = getNewLabel();
+            String exit = getNewLabel();
+
+            $code = $condition.code;
+            $code += "JUMPF "+elseArea + "\n";
+            $code += $a.code;
+            $code += "JUMP "+exit+"\n";
+            $code += "LABEL "+elseArea + "\n";
+            $code += $b.code;
+            $code += "JUMP "+exit+"\n"; 
+            $code += "LABEL "+exit+"\n";
+        }
+    | 'if(' condition ')' a = instruction
+        {
+            String exit = getNewLabel();
+
+            $code = $condition.code;
+            $code += "JUMPF "+exit + "\n";
+            $code += $a.code;
+            $code += "JUMP "+exit+"\n";
+            $code += "LABEL "+exit+"\n";
         }
     ;
 

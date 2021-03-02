@@ -51,6 +51,18 @@ public class CalcBaseListener implements CalcListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterBloc(CalcParser.BlocContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBloc(CalcParser.BlocContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterExpression(CalcParser.ExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -135,13 +147,13 @@ public class CalcBaseListener implements CalcListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterBloc(CalcParser.BlocContext ctx) { }
+	@Override public void enterIfCondition(CalcParser.IfConditionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitBloc(CalcParser.BlocContext ctx) { }
+	@Override public void exitIfCondition(CalcParser.IfConditionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

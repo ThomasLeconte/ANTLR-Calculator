@@ -37,6 +37,16 @@ public interface CalcListener extends ParseTreeListener {
 	 */
 	void exitInstruction(CalcParser.InstructionContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link CalcParser#bloc}.
+	 * @param ctx the parse tree
+	 */
+	void enterBloc(CalcParser.BlocContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CalcParser#bloc}.
+	 * @param ctx the parse tree
+	 */
+	void exitBloc(CalcParser.BlocContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link CalcParser#expression}.
 	 * @param ctx the parse tree
 	 */
@@ -107,15 +117,15 @@ public interface CalcListener extends ParseTreeListener {
 	 */
 	void exitBoucle(CalcParser.BoucleContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link CalcParser#bloc}.
+	 * Enter a parse tree produced by {@link CalcParser#ifCondition}.
 	 * @param ctx the parse tree
 	 */
-	void enterBloc(CalcParser.BlocContext ctx);
+	void enterIfCondition(CalcParser.IfConditionContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link CalcParser#bloc}.
+	 * Exit a parse tree produced by {@link CalcParser#ifCondition}.
 	 * @param ctx the parse tree
 	 */
-	void exitBloc(CalcParser.BlocContext ctx);
+	void exitIfCondition(CalcParser.IfConditionContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CalcParser#write}.
 	 * @param ctx the parse tree
