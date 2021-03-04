@@ -1,3 +1,8 @@
+# Commandes : 
+antlr4 Calc.g4 && javac -encoding utf8 *.java && grun Calc start -gui > test.mvap
+
+java MVaPAssembler test.mvap && java CBaP -d test.mvap.cbap
+
 Machine Virtuelle à Pile (MVàP)
 ================================
 
