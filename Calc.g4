@@ -1,7 +1,7 @@
 grammar Calc;
 
 @members {
-            private TableSymboles tableSymboles = new TableSymboles(); 
+            private TableSymboles tableSymboles = new TableSymboles();
             private int _cur_label = 1;
             /** générateur de nom d'étiquettes pour les boucles */
             private String getNewLabel() { return "B" +(_cur_label++); }
@@ -17,9 +17,10 @@ calcul returns [ String code ]
 
 @after{ System.out.println($code); }
     :   (decl { $code += $decl.code; })*  //Nouveau code      
-        
+        { $code += "  JUMP Main\n"; }
         NEWLINE*
         
+        { $code += "LABEL Main\n"; }
         (instruction { $code += $instruction.code; })*
 
         { $code += "HALT\n"; } 
@@ -245,6 +246,20 @@ boucle returns [ String code ]
             $code += $a.code;
             $code += "JUMP "+ boucle1 + "\n";
             $code += "LABEL "+ boucle2 + "\n";
+        }
+        |'for(' c= assignation ';' condition ';' b=assignation ')' instruction
+        {
+            String debutFor = getNewLabel();
+            String exit = getNewLabel();
+
+            $code += $c.code;
+            $code = "LABEL " + debutFor + "\n";
+            $code += $condition.code;
+            $code += "JUMPF "+ exit + "\n";
+            $code += $instruction.code;
+            $code += $b.code;
+            $code += "JUMP "+ debutFor + "\n";
+            $code += "LABEL "+ exit + "\n";
         }
     ;
 
