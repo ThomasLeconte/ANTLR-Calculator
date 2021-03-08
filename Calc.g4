@@ -1,7 +1,7 @@
 grammar Calc;
 
 @members {
-            private TableSymboles tableSymboles = new TableSymboles();
+            private TablesSymboles tableSymboles = new TablesSymboles();
             private int _cur_label = 1;
             /** générateur de nom d'étiquettes pour les boucles */
             private String getNewLabel() { return "B" +(_cur_label++); }
@@ -13,17 +13,19 @@ start :
 
 
 calcul returns [ String code ] 
-@init{ $code = new String(); }   // On initialise code, pour ensuite l'utiliser comme accumulateur
-
+@init{ $code = new String(); }   // On initialise $code, pour ensuite l'utiliser comme accumulateur 
 @after{ System.out.println($code); }
-    :   (decl { $code += $decl.code; })*  //Nouveau code      
+    :   (decl { $code += $decl.code; })*        
         { $code += "  JUMP Main\n"; }
+        NEWLINE*
+        
+        (fonction { $code += $fonction.code; })* 
         NEWLINE*
         
         { $code += "LABEL Main\n"; }
         (instruction { $code += $instruction.code; })*
 
-        { $code += "HALT\n"; } 
+        { $code += "  HALT\n"; } 
     ;
 
 instruction returns [ String code ] 
@@ -54,6 +56,59 @@ instruction returns [ String code ]
     | ifCondition
         {
             $code = $ifCondition.code;
+        }
+    ;
+
+
+fonction returns [ String code ]
+@init{ $code = new String(); }
+    : TYPE IDENTIFIANT '('  a = params ? ')' 
+        {
+            $code += "LABEL "+$IDENTIFIANT.text+"\n";
+            //On déclare la fonction pour pouvoir jump dessus plus tard
+            tableSymboles.newFunction($IDENTIFIANT.text, $TYPE.text);
+        }
+        bloc 
+        {
+            $code += $bloc.code;
+            $code += "RETURN\n";
+        }
+    ;
+
+params returns [String code ]
+    : TYPE IDENTIFIANT
+        {
+            tableSymboles.putVar($IDENTIFIANT.text, $TYPE.text); //On sauvegarde la variable
+        }  
+        ( ',' TYPE IDENTIFIANT
+            {
+                tableSymboles.putVar($IDENTIFIANT.text, $TYPE.text); //On sauvegarde la variable
+                // code java gérant une variable locale (argi)
+            } 
+        )*
+    ;
+
+// init nécessaire à cause du ? final et donc args peut être vide (mais $args sera non null) 
+args returns [ String code, int size] @init{ $code = new String(); $size = 0; }
+    : ( expression 
+    { 
+        $code += $expression.code;
+    }
+    ( ',' expression 
+    { 
+        $code += $expression.code;
+    } 
+    )*
+      )? 
+    ;
+
+expr returns [ String code, String type ]
+    :
+    //...
+    | IDENTIFIANT '(' args ')'                  // appel de fonction  
+        {  
+            String var = tableSymboles.getFunction($IDENTIFIANT.text); //retourne le type de la fonction
+            $code = "CALL "+$IDENTIFIANT.text+"\n";
         }
     ;
 
@@ -94,6 +149,10 @@ expression returns [ String code ]
             $code = "PUSHI 0\n";
             $code += "PUSHI "+$f.text+"\n";
             $code += "SUB\n";
+        }
+    | expr
+        {
+            $code = $expr.code;
         }
     ;
 

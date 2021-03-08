@@ -37,6 +37,46 @@ public interface CalcListener extends ParseTreeListener {
 	 */
 	void exitInstruction(CalcParser.InstructionContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link CalcParser#fonction}.
+	 * @param ctx the parse tree
+	 */
+	void enterFonction(CalcParser.FonctionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CalcParser#fonction}.
+	 * @param ctx the parse tree
+	 */
+	void exitFonction(CalcParser.FonctionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CalcParser#params}.
+	 * @param ctx the parse tree
+	 */
+	void enterParams(CalcParser.ParamsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CalcParser#params}.
+	 * @param ctx the parse tree
+	 */
+	void exitParams(CalcParser.ParamsContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CalcParser#args}.
+	 * @param ctx the parse tree
+	 */
+	void enterArgs(CalcParser.ArgsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CalcParser#args}.
+	 * @param ctx the parse tree
+	 */
+	void exitArgs(CalcParser.ArgsContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CalcParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpr(CalcParser.ExprContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CalcParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpr(CalcParser.ExprContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link CalcParser#bloc}.
 	 * @param ctx the parse tree
 	 */
