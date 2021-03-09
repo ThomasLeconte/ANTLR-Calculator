@@ -104,6 +104,13 @@ public class CalcParser extends Parser {
 	            private int _cur_label = 1;
 	            /** générateur de nom d'étiquettes pour les boucles */
 	            private String getNewLabel() { return "B" +(_cur_label++); }
+	            private boolean isLocalAdress(AdresseType at){
+	                if(at.adresse >= 0){
+	                    return false;
+	                }else{
+	                    return true;
+	                }
+	            }
 	            // ...
 	        
 	public CalcParser(TokenStream input) {
@@ -203,7 +210,7 @@ public class CalcParser extends Parser {
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,0,_ctx);
 			}
-			 _localctx.code += "  JUMP Main\n"; 
+			 _localctx.code += "JUMP Main\n"; 
 			setState(53);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,1,_ctx);
@@ -520,6 +527,7 @@ public class CalcParser extends Parser {
 			setState(118);
 			((ParamsContext)_localctx).IDENTIFIANT = match(IDENTIFIANT);
 
+			            tableSymboles.newTableLocale();
 			            tableSymboles.putVar((((ParamsContext)_localctx).IDENTIFIANT!=null?((ParamsContext)_localctx).IDENTIFIANT.getText():null), (((ParamsContext)_localctx).TYPE!=null?((ParamsContext)_localctx).TYPE.getText():null)); //On sauvegarde la variable
 			        
 			setState(126);
@@ -844,7 +852,12 @@ public class CalcParser extends Parser {
 				((ExpressionContext)_localctx).IDENTIFIANT = match(IDENTIFIANT);
 
 				            AdresseType var = tableSymboles.getAdresseType((((ExpressionContext)_localctx).IDENTIFIANT!=null?((ExpressionContext)_localctx).IDENTIFIANT.getText():null));
-				            ((ExpressionContext)_localctx).code =  "PUSHG "+var.adresse+"\n";
+				            if(isLocalAdress(var)){
+				                ((ExpressionContext)_localctx).code =  "PUSHL "+var.adresse+"\n";
+				            }else{
+				                ((ExpressionContext)_localctx).code =  "PUSHG "+var.adresse+"\n";
+				            }
+
 				        
 				}
 				break;
@@ -1031,7 +1044,11 @@ public class CalcParser extends Parser {
 				            _localctx.code += ((DeclContext)_localctx).expression.code; //PUSHI x
 				            tableSymboles.putVar((((DeclContext)_localctx).IDENTIFIANT!=null?((DeclContext)_localctx).IDENTIFIANT.getText():null), (((DeclContext)_localctx).TYPE!=null?((DeclContext)_localctx).TYPE.getText():null)); //On sauvegarde la variable
 				            AdresseType at = tableSymboles.getAdresseType((((DeclContext)_localctx).IDENTIFIANT!=null?((DeclContext)_localctx).IDENTIFIANT.getText():null));
-				            _localctx.code += "STOREG "+at.adresse+"\n";
+				            if(isLocalAdress(at)){
+				                _localctx.code += "STOREL "+at.adresse+"\n";
+				            }else{
+				                _localctx.code += "STOREG "+at.adresse+"\n";
+				            }
 				        
 				}
 				break;
@@ -1083,7 +1100,12 @@ public class CalcParser extends Parser {
 
 				            AdresseType at = tableSymboles.getAdresseType((((AssignationContext)_localctx).IDENTIFIANT!=null?((AssignationContext)_localctx).IDENTIFIANT.getText():null)); //On récupère l'@ de la variable X
 				            ((AssignationContext)_localctx).code =  ((AssignationContext)_localctx).expression.code; //PUSHI x (qui peut aussi être le code de l'expression)
-				            _localctx.code += "STOREG "+at.adresse+"\n"; //On stocke la valeur d'expression à l'@ de X
+				            if(isLocalAdress(at)){
+				                _localctx.code += "STOREL "+at.adresse+"\n"; //On stocke la valeur d'expression à l'@ de X
+				            }else{
+				                _localctx.code += "STOREG "+at.adresse+"\n"; //On stocke la valeur d'expression à l'@ de X
+				            }
+
 				        
 				}
 				break;
@@ -1105,17 +1127,24 @@ public class CalcParser extends Parser {
 				}
 
 				            AdresseType at = tableSymboles.getAdresseType((((AssignationContext)_localctx).IDENTIFIANT!=null?((AssignationContext)_localctx).IDENTIFIANT.getText():null));
+				            if(isLocalAdress(at)){
+				                ((AssignationContext)_localctx).code =  "PUSHL "+at.adresse+"\n";
+				            }else{
+				                ((AssignationContext)_localctx).code =  "PUSHG "+at.adresse+"\n";
+				            }
 				            ((AssignationContext)_localctx).code =  "PUSHG "+at.adresse+"\n";
 				            if((((AssignationContext)_localctx).operator!=null?((AssignationContext)_localctx).operator.getText():null).equals("++")){
 				                _localctx.code += "PUSHI 1\n";
 				                _localctx.code += "ADD\n";
-				                _localctx.code += "STOREG "+at.adresse+"\n"; //On stocke la valeur d'expression à l'@ de X
 				            }else{
 				                _localctx.code += "PUSHI 1\n";
 				                _localctx.code += "SUB\n";
+				            }
+				            if(isLocalAdress(at)){
+				                _localctx.code += "STOREL "+at.adresse+"\n"; //On stocke la valeur d'expression à l'@ de X
+				            }else{
 				                _localctx.code += "STOREG "+at.adresse+"\n"; //On stocke la valeur d'expression à l'@ de X
 				            }
-
 				        
 				}
 				break;

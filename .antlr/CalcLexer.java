@@ -96,6 +96,13 @@ public class CalcLexer extends Lexer {
 	            private int _cur_label = 1;
 	            /** générateur de nom d'étiquettes pour les boucles */
 	            private String getNewLabel() { return "B" +(_cur_label++); }
+	            private boolean isLocalAdress(AdresseType at){
+	                if(at.adresse >= 0){
+	                    return false;
+	                }else{
+	                    return true;
+	                }
+	            }
 	            // ...
 	        
 

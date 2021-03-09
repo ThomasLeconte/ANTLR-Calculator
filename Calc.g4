@@ -5,6 +5,13 @@ grammar Calc;
             private int _cur_label = 1;
             /** générateur de nom d'étiquettes pour les boucles */
             private String getNewLabel() { return "B" +(_cur_label++); }
+            private boolean isLocalAdress(AdresseType at){
+                if(at.adresse >= 0){
+                    return false;
+                }else{
+                    return true;
+                }
+            }
             // ...
         }
 
@@ -16,7 +23,7 @@ calcul returns [ String code ]
 @init{ $code = new String(); }   // On initialise $code, pour ensuite l'utiliser comme accumulateur 
 @after{ System.out.println($code); }
     :   (decl { $code += $decl.code; })*        
-        { $code += "  JUMP Main\n"; }
+        { $code += "JUMP Main\n"; }
         NEWLINE*
         
         (fonction { $code += $fonction.code; })* 
@@ -78,6 +85,7 @@ fonction returns [ String code ]
 params returns [String code ]
     : TYPE IDENTIFIANT
         {
+            tableSymboles.newTableLocale();
             tableSymboles.putVar($IDENTIFIANT.text, $TYPE.text); //On sauvegarde la variable
         }  
         ( ',' TYPE IDENTIFIANT
@@ -138,7 +146,12 @@ expression returns [ String code ]
     | IDENTIFIANT
         {
             AdresseType var = tableSymboles.getAdresseType($IDENTIFIANT.text);
-            $code = "PUSHG "+var.adresse+"\n";
+            if(isLocalAdress(var)){
+                $code = "PUSHL "+var.adresse+"\n";
+            }else{
+                $code = "PUSHG "+var.adresse+"\n";
+            }
+
         }
     | ENTIER
         {
@@ -169,7 +182,11 @@ decl returns [ String code ]
             $code += $expression.code; //PUSHI x
             tableSymboles.putVar($IDENTIFIANT.text, $TYPE.text); //On sauvegarde la variable
             AdresseType at = tableSymboles.getAdresseType($IDENTIFIANT.text);
-            $code += "STOREG "+at.adresse+"\n";
+            if(isLocalAdress(at)){
+                $code += "STOREL "+at.adresse+"\n";
+            }else{
+                $code += "STOREG "+at.adresse+"\n";
+            }
         }
     ; 
 
@@ -178,22 +195,34 @@ assignation returns [ String code ]
         {
             AdresseType at = tableSymboles.getAdresseType($IDENTIFIANT.text); //On récupère l'@ de la variable X
             $code = $expression.code; //PUSHI x (qui peut aussi être le code de l'expression)
-            $code += "STOREG "+at.adresse+"\n"; //On stocke la valeur d'expression à l'@ de X
+            if(isLocalAdress(at)){
+                $code += "STOREL "+at.adresse+"\n"; //On stocke la valeur d'expression à l'@ de X
+            }else{
+                $code += "STOREG "+at.adresse+"\n"; //On stocke la valeur d'expression à l'@ de X
+            }
+
         }
     | IDENTIFIANT operator = ( '++'| '--' )
         {
             AdresseType at = tableSymboles.getAdresseType($IDENTIFIANT.text);
+            if(isLocalAdress(at)){
+                $code = "PUSHL "+at.adresse+"\n";
+            }else{
+                $code = "PUSHG "+at.adresse+"\n";
+            }
             $code = "PUSHG "+at.adresse+"\n";
             if($operator.text.equals("++")){
                 $code += "PUSHI 1\n";
                 $code += "ADD\n";
-                $code += "STOREG "+at.adresse+"\n"; //On stocke la valeur d'expression à l'@ de X
             }else{
                 $code += "PUSHI 1\n";
                 $code += "SUB\n";
+            }
+            if(isLocalAdress(at)){
+                $code += "STOREL "+at.adresse+"\n"; //On stocke la valeur d'expression à l'@ de X
+            }else{
                 $code += "STOREG "+at.adresse+"\n"; //On stocke la valeur d'expression à l'@ de X
             }
-
         }
     ;
 
