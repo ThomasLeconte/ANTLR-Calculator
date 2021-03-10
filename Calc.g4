@@ -69,7 +69,7 @@ instruction returns [ String code ]
 
 fonction returns [ String code ]
 @init{ $code = new String(); }
-    : TYPE IDENTIFIANT '('  a = params ? ')' 
+    : TYPE IDENTIFIANT '('  params ? ')'
         {
             $code += "LABEL "+$IDENTIFIANT.text+"\n";
             //On déclare la fonction pour pouvoir jump dessus plus tard
@@ -82,7 +82,7 @@ fonction returns [ String code ]
         }
     ;
 
-params returns [String code ]
+params
     : TYPE IDENTIFIANT
         {
             tableSymboles.newTableLocale();
@@ -97,7 +97,8 @@ params returns [String code ]
     ;
 
 // init nécessaire à cause du ? final et donc args peut être vide (mais $args sera non null) 
-args returns [ String code, int size] @init{ $code = new String(); $size = 0; }
+args returns [ String code, int size] 
+@init{ $code = new String(); $size = 0; }
     : ( expression 
     { 
         $code += $expression.code;
@@ -111,12 +112,13 @@ args returns [ String code, int size] @init{ $code = new String(); $size = 0; }
     ;
 
 expr returns [ String code, String type ]
+@init{ $code = new String(); }
     :
     //...
     | IDENTIFIANT '(' args ')'                  // appel de fonction  
         {  
             String var = tableSymboles.getFunction($IDENTIFIANT.text); //retourne le type de la fonction
-            $code = "CALL "+$IDENTIFIANT.text+"\n";
+            $code += "CALL "+$IDENTIFIANT.text+"\n";
         }
     ;
 
@@ -163,7 +165,7 @@ expression returns [ String code ]
             $code += "PUSHI "+$f.text+"\n";
             $code += "SUB\n";
         }
-    | expr
+    |  expr
         {
             $code = $expr.code;
         }

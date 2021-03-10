@@ -431,7 +431,6 @@ public class CalcParser extends Parser {
 		public String code;
 		public Token TYPE;
 		public Token IDENTIFIANT;
-		public ParamsContext a;
 		public BlocContext bloc;
 		public TerminalNode TYPE() { return getToken(CalcParser.TYPE, 0); }
 		public TerminalNode IDENTIFIANT() { return getToken(CalcParser.IDENTIFIANT, 0); }
@@ -467,7 +466,7 @@ public class CalcParser extends Parser {
 			if (_la==TYPE) {
 				{
 				setState(109);
-				((FonctionContext)_localctx).a = params();
+				params();
 				}
 			}
 
@@ -498,7 +497,6 @@ public class CalcParser extends Parser {
 	}
 
 	public static class ParamsContext extends ParserRuleContext {
-		public String code;
 		public Token TYPE;
 		public Token IDENTIFIANT;
 		public List<TerminalNode> TYPE() { return getTokens(CalcParser.TYPE); }
@@ -651,6 +649,7 @@ public class CalcParser extends Parser {
 	public final ExprContext expr() throws RecognitionException {
 		ExprContext _localctx = new ExprContext(_ctx, getState());
 		enterRule(_localctx, 12, RULE_expr);
+		 ((ExprContext)_localctx).code =  new String(); 
 		try {
 			setState(149);
 			_errHandler.sync(this);
@@ -673,7 +672,7 @@ public class CalcParser extends Parser {
 				match(T__1);
 				  
 				            String var = tableSymboles.getFunction((((ExprContext)_localctx).IDENTIFIANT!=null?((ExprContext)_localctx).IDENTIFIANT.getText():null)); //retourne le type de la fonction
-				            ((ExprContext)_localctx).code =  "CALL "+(((ExprContext)_localctx).IDENTIFIANT!=null?((ExprContext)_localctx).IDENTIFIANT.getText():null)+"\n";
+				            _localctx.code += "CALL "+(((ExprContext)_localctx).IDENTIFIANT!=null?((ExprContext)_localctx).IDENTIFIANT.getText():null)+"\n";
 				        
 				}
 				break;
