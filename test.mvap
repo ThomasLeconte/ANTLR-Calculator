@@ -1,5 +1,16 @@
+PUSHI 0
+PUSHI 1
+STOREG 0
+JUMP Main
+LABEL foo
+PUSHI 2
+STOREL -3
+RETURN
+RETURN
+LABEL Main
+CALL foo
+PUSHG 0
+WRITE
+POP
+  HALT
 
-D:\Licence 3\Semestre 2\language compilation\TP\TP5>java org.antlr.v4.gui.TestRig Calc start -gui 
-Terminer le programme de commandes (O/N)ÿ? 
-
-D:\Licence 3\Semestre 2\language compilation\TP\TP5>

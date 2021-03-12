@@ -64,6 +64,10 @@ instruction returns [ String code ]
         {
             $code = $ifCondition.code;
         }
+    |  useFunction finInstruction
+        {
+            $code = $useFunction.code;
+        }
     ;
 
 
@@ -78,6 +82,7 @@ fonction returns [ String code ]
         bloc 
         {
             $code += $bloc.code;
+            $code += "RETURN\n";
             $code += "RETURN\n";
         }
     ;
@@ -111,11 +116,9 @@ args returns [ String code, int size]
       )? 
     ;
 
-expr returns [ String code, String type ]
+useFunction returns [ String code, String type ]
 @init{ $code = new String(); }
-    :
-    //...
-    | IDENTIFIANT '(' args ')'                  // appel de fonction  
+    : IDENTIFIANT '(' args ')'                  // appel de fonction  
         {  
             String var = tableSymboles.getFunction($IDENTIFIANT.text); //retourne le type de la fonction
             $code += "CALL "+$IDENTIFIANT.text+"\n";
@@ -164,10 +167,6 @@ expression returns [ String code ]
             $code = "PUSHI 0\n";
             $code += "PUSHI "+$f.text+"\n";
             $code += "SUB\n";
-        }
-    |  expr
-        {
-            $code = $expr.code;
         }
     ;
 

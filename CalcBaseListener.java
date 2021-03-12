@@ -87,13 +87,13 @@ public class CalcBaseListener implements CalcListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpr(CalcParser.ExprContext ctx) { }
+	@Override public void enterUseFunction(CalcParser.UseFunctionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpr(CalcParser.ExprContext ctx) { }
+	@Override public void exitUseFunction(CalcParser.UseFunctionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
