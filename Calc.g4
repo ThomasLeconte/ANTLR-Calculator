@@ -23,7 +23,7 @@ calcul returns [ String code ]
 @init{ $code = new String(); }   // On initialise $code, pour ensuite l'utiliser comme accumulateur 
 @after{ System.out.println($code); }
     :   (decl { $code += $decl.code; })*        
-        { $code += "JUMP Main\n"; }
+        { $code += "  JUMP Main\n"; }
         NEWLINE*
         
         (fonction { $code += $fonction.code; })* 
@@ -32,13 +32,17 @@ calcul returns [ String code ]
         { $code += "LABEL Main\n"; }
         (instruction { $code += $instruction.code; })*
 
-        { $code += "HALT\n"; } 
+        { $code += "  HALT\n"; } 
     ;
 
 instruction returns [ String code ] 
     : expression finInstruction 
         { 
             $code = $expression.code;
+        }
+    | decl finInstruction
+        { 
+		    $code = $decl.code;
         }
     | assignation finInstruction
         { 
@@ -66,6 +70,13 @@ instruction returns [ String code ]
         }
     | RETURN expression finInstruction    
         {
+            $code = "PUSHI 0\n";
+            $code += $expression.code;
+            tableSymboles.putVar("ReturnValue", "int"); //On sauvegarde la variable
+            AdresseType at = tableSymboles.getAdresseType("ReturnValue");
+            $code += "STOREL "+at.adresse+"\n";
+            $code += "RETURN\n";
+            $code += "RETURN\n";
         }
     ;
 
@@ -81,12 +92,7 @@ fonction returns [ String code ]
         {
             tableSymboles.putVar($IDENTIFIANT.text, $TYPE.text);
             AdresseType at = tableSymboles.getAdresseType($IDENTIFIANT.text);
-            if(isLocalAdress(at)){
-                $code += "STOREL "+at.adresse+"\n";
-            }else{
-                $code += "STOREG "+at.adresse+"\n";
-            }
-
+            
             tableSymboles.newTableLocale();
             $code += "LABEL "+$IDENTIFIANT.text+"\n";
             //On déclare la fonction pour pouvoir jump dessus plus tard
@@ -100,8 +106,6 @@ fonction returns [ String code ]
             }else{
                 $code += "STOREG "+at.adresse+"\n";
             }
-            $code += "RETURN\n";
-            $code += "RETURN\n";
         }
     ;
 
@@ -197,6 +201,7 @@ decl returns [ String code ]
             $code += $expression.code; //PUSHI x
             tableSymboles.putVar($IDENTIFIANT.text, $TYPE.text); //On sauvegarde la variable
             AdresseType at = tableSymboles.getAdresseType($IDENTIFIANT.text);
+            System.out.println(at.adresse);
             if(isLocalAdress(at)){
                 $code += "STOREL "+at.adresse+"\n";
             }else{
