@@ -32,7 +32,7 @@ calcul returns [ String code ]
         { $code += "LABEL Main\n"; }
         (instruction { $code += $instruction.code; })*
 
-        { $code += "  HALT\n"; } 
+        { $code += "HALT\n"; } 
     ;
 
 instruction returns [ String code ] 
@@ -44,37 +44,50 @@ instruction returns [ String code ]
         { 
 		    $code = $assignation.code;
         }
-    | write
+    | write finInstruction
         {
             $code = $write.code;
         }
-    | read
+    | read finInstruction
         {
             $code = $read.code;
         }
-    | boucle
+    | boucle finInstruction
         {
             $code = $boucle.code;
         }
-    | bloc
+    | bloc finInstruction
         {
             $code = $bloc.code;
         }
-    | ifCondition
+    | ifCondition finInstruction
         {
             $code = $ifCondition.code;
         }
-    |  useFunction finInstruction
+    | RETURN expression finInstruction    
         {
-            $code = $useFunction.code;
         }
     ;
 
 
 fonction returns [ String code ]
 @init{ $code = new String(); }
-    : TYPE IDENTIFIANT '('  params ? ')'
+@after { tableSymboles.dropTableLocale(); }
+    : TYPE
         {
+            $code += "PUSHI 0\n";
+        }
+        IDENTIFIANT '('  params ? ')'
+        {
+            tableSymboles.putVar($IDENTIFIANT.text, $TYPE.text);
+            AdresseType at = tableSymboles.getAdresseType($IDENTIFIANT.text);
+            if(isLocalAdress(at)){
+                $code += "STOREL "+at.adresse+"\n";
+            }else{
+                $code += "STOREG "+at.adresse+"\n";
+            }
+
+            tableSymboles.newTableLocale();
             $code += "LABEL "+$IDENTIFIANT.text+"\n";
             //On déclare la fonction pour pouvoir jump dessus plus tard
             tableSymboles.newFunction($IDENTIFIANT.text, $TYPE.text);
@@ -82,6 +95,11 @@ fonction returns [ String code ]
         bloc 
         {
             $code += $bloc.code;
+            if(isLocalAdress(at)){
+                $code += "STOREL "+at.adresse+"\n";
+            }else{
+                $code += "STOREG "+at.adresse+"\n";
+            }
             $code += "RETURN\n";
             $code += "RETURN\n";
         }
@@ -90,7 +108,6 @@ fonction returns [ String code ]
 params
     : TYPE IDENTIFIANT
         {
-            tableSymboles.newTableLocale();
             tableSymboles.putVar($IDENTIFIANT.text, $TYPE.text); //On sauvegarde la variable
         }  
         ( ',' TYPE IDENTIFIANT
@@ -114,15 +131,6 @@ args returns [ String code, int size]
     } 
     )*
       )? 
-    ;
-
-useFunction returns [ String code, String type ]
-@init{ $code = new String(); }
-    : IDENTIFIANT '(' args ')'                  // appel de fonction  
-        {  
-            String var = tableSymboles.getFunction($IDENTIFIANT.text); //retourne le type de la fonction
-            $code += "CALL "+$IDENTIFIANT.text+"\n";
-        }
     ;
 
 bloc returns[ String code ]
@@ -167,6 +175,12 @@ expression returns [ String code ]
             $code = "PUSHI 0\n";
             $code += "PUSHI "+$f.text+"\n";
             $code += "SUB\n";
+        }
+    | IDENTIFIANT '(' args ')'                  // appel de fonction  
+        {
+            $code = $args.code;
+            String var = tableSymboles.getFunction($IDENTIFIANT.text); //retourne le type de la fonction
+            $code += "CALL "+$IDENTIFIANT.text+"\n";
         }
     ;
 
@@ -401,6 +415,8 @@ finInstruction : ( NEWLINE | ';' )+ ;
 NEWLINE : '\r'? '\n';
 
 WS :   (' '|'\t')+ -> skip  ;
+
+RETURN: 'return';
 
 ENTIER: ('0' ..'9')+;
 

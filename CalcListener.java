@@ -67,16 +67,6 @@ public interface CalcListener extends ParseTreeListener {
 	 */
 	void exitArgs(CalcParser.ArgsContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link CalcParser#useFunction}.
-	 * @param ctx the parse tree
-	 */
-	void enterUseFunction(CalcParser.UseFunctionContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link CalcParser#useFunction}.
-	 * @param ctx the parse tree
-	 */
-	void exitUseFunction(CalcParser.UseFunctionContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link CalcParser#bloc}.
 	 * @param ctx the parse tree
 	 */
