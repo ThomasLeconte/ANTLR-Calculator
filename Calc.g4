@@ -201,7 +201,6 @@ decl returns [ String code ]
             $code += $expression.code; //PUSHI x
             tableSymboles.putVar($IDENTIFIANT.text, $TYPE.text); //On sauvegarde la variable
             AdresseType at = tableSymboles.getAdresseType($IDENTIFIANT.text);
-            System.out.println(at.adresse);
             if(isLocalAdress(at)){
                 $code += "STOREL "+at.adresse+"\n";
             }else{
@@ -355,13 +354,25 @@ boucle returns [ String code ]
             $code += "JUMP "+ boucle1 + "\n";
             $code += "LABEL "+ boucle2 + "\n";
         }
+        |'repeat' d = instruction 'until(' e = condition ')'
+        {
+            String debutRepeat = getNewLabel();
+            String finBoucle = getNewLabel();
+
+            $code =  "LABEL " + debutRepeat + "\n";
+            $code += $d.code;
+            $code += $e.code;
+            $code += "JUMPF "+ debutRepeat + "\n";
+            $code += "JUMP "+ finBoucle + "\n";
+            $code += "LABEL "+ finBoucle + "\n";
+        }
         |'for(' c= assignation ';' condition ';' b=assignation ')' instruction
         {
             String debutFor = getNewLabel();
             String exit = getNewLabel();
 
-            $code += $c.code;
-            $code = "LABEL " + debutFor + "\n";
+            $code = $c.code;
+            $code += "LABEL " + debutFor + "\n";
             $code += $condition.code;
             $code += "JUMPF "+ exit + "\n";
             $code += $instruction.code;
