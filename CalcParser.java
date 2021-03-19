@@ -1876,7 +1876,6 @@ public class CalcParser extends Parser {
 
 			            ((WriteContext)_localctx).code =  ((WriteContext)_localctx).expression.code;
 			            _localctx.code += "WRITE\n";
-			            _localctx.code += "POP\n";
 			        
 			}
 		}
@@ -1893,10 +1892,8 @@ public class CalcParser extends Parser {
 
 	public static class ReadContext extends ParserRuleContext {
 		public String code;
-		public ExpressionContext expression;
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
+		public Token IDENTIFIANT;
+		public TerminalNode IDENTIFIANT() { return getToken(CalcParser.IDENTIFIANT, 0); }
 		public ReadContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1920,11 +1917,14 @@ public class CalcParser extends Parser {
 			setState(333);
 			match(T__31);
 			setState(334);
-			((ReadContext)_localctx).expression = expression(0);
+			((ReadContext)_localctx).IDENTIFIANT = match(IDENTIFIANT);
 			setState(335);
 			match(T__1);
 
-			            ((ReadContext)_localctx).code =  ((ReadContext)_localctx).expression.code;
+			            AdresseType at = tableSymboles.getAdresseType((((ReadContext)_localctx).IDENTIFIANT!=null?((ReadContext)_localctx).IDENTIFIANT.getText():null));
+
+			            ((ReadContext)_localctx).code =  "READ\n";
+			            _localctx.code += "STOREG " + at.adresse + "\n";
 			        
 			}
 		}
@@ -2147,8 +2147,8 @@ public class CalcParser extends Parser {
 		"\u0146\u0147\b\20\1\2\u0147\u0149\3\2\2\2\u0148\u013a\3\2\2\2\u0148\u0142"+
 		"\3\2\2\2\u0149\37\3\2\2\2\u014a\u014b\7!\2\2\u014b\u014c\5\20\t\2\u014c"+
 		"\u014d\7\4\2\2\u014d\u014e\b\21\1\2\u014e!\3\2\2\2\u014f\u0150\7\"\2\2"+
-		"\u0150\u0151\5\20\t\2\u0151\u0152\7\4\2\2\u0152\u0153\b\22\1\2\u0153#"+
-		"\3\2\2\2\u0154\u0156\t\5\2\2\u0155\u0154\3\2\2\2\u0156\u0157\3\2\2\2\u0157"+
+		"\u0150\u0151\7)\2\2\u0151\u0152\7\4\2\2\u0152\u0153\b\22\1\2\u0153#\3"+
+		"\2\2\2\u0154\u0156\t\5\2\2\u0155\u0154\3\2\2\2\u0156\u0157\3\2\2\2\u0157"+
 		"\u0155\3\2\2\2\u0157\u0158\3\2\2\2\u0158%\3\2\2\2\33.\65=CLv}\u008d\u0098"+
 		"\u009b\u00a1\u00a8\u00af\u00c5\u00d1\u00d3\u00e2\u00ec\u00fa\u0100\u0115"+
 		"\u011e\u0138\u0148\u0157";

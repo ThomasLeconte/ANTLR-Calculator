@@ -414,14 +414,16 @@ write returns [ String code ]
         {
             $code = $expression.code;
             $code += "WRITE\n";
-            $code += "POP\n";
         }
     ;
 
 read returns [ String code ]
-    : 'read(' expression ')'
+    : 'read(' IDENTIFIANT ')'
         {
-            $code = $expression.code;
+            AdresseType at = tableSymboles.getAdresseType($IDENTIFIANT.text);
+
+            $code = "READ\n";
+            $code += "STOREG " + at.adresse + "\n";
         }
     ;
 
@@ -443,3 +445,4 @@ TYPE : 'int' | 'float' ;
 IDENTIFIANT : ('a'..'z')+ ;
 
 UNMATCH : . -> skip ;
+
