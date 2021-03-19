@@ -64,7 +64,7 @@ instruction returns [ String code ]
         {
             $code = $bloc.code;
         }
-    | ifCondition finInstruction
+    | ifCondition
         {
             $code = $ifCondition.code;
         }
@@ -383,7 +383,7 @@ boucle returns [ String code ]
     ;
 
 ifCondition returns [ String code ]
-    : 'if(' condition ')' a = instruction 'else' b = instruction
+    : 'if (' condition ')' a = instruction 'else' b = instruction
         {
             String elseArea = getNewLabel();
             String exit = getNewLabel();
@@ -397,7 +397,7 @@ ifCondition returns [ String code ]
             $code += "JUMP "+exit+"\n"; 
             $code += "LABEL "+exit+"\n";
         }
-    | 'if(' condition ')' a = instruction
+    | 'if (' condition ')' a = instruction
         {
             String exit = getNewLabel();
 
