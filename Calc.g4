@@ -56,7 +56,7 @@ instruction returns [ String code ]
         {
             $code = $read.code;
         }
-    | boucle finInstruction
+    | boucle 
         {
             $code = $boucle.code;
         }
@@ -342,7 +342,7 @@ condition returns [String code]
     ;
 
 boucle returns [ String code ] 
-    : 'while(' condition ')' a = instruction
+    : 'while (' condition ')' a = instruction
         {
             String boucle1 = getNewLabel();
             String boucle2 = getNewLabel();
@@ -354,7 +354,7 @@ boucle returns [ String code ]
             $code += "JUMP "+ boucle1 + "\n";
             $code += "LABEL "+ boucle2 + "\n";
         }
-        |'repeat' d = instruction 'until(' e = condition ')'
+        |'repeat' d = instruction 'until (' e = condition ')'
         {
             String debutRepeat = getNewLabel();
             String finBoucle = getNewLabel();
@@ -366,7 +366,7 @@ boucle returns [ String code ]
             $code += "JUMP "+ finBoucle + "\n";
             $code += "LABEL "+ finBoucle + "\n";
         }
-        |'for(' c= assignation ';' condition ';' b=assignation ')' instruction
+        |'for (' c= assignation ';' condition ';' b=assignation ')' instruction
         {
             String debutFor = getNewLabel();
             String exit = getNewLabel();
