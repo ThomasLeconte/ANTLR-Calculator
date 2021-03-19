@@ -414,6 +414,7 @@ write returns [ String code ]
         {
             $code = $expression.code;
             $code += "WRITE\n";
+            $code += "POP \n";
         }
     ;
 
@@ -424,6 +425,7 @@ read returns [ String code ]
 
             $code = "READ\n";
             $code += "STOREG " + at.adresse + "\n";
+            $code += "POP \n";
         }
     ;
 

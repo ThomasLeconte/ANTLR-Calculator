@@ -1913,6 +1913,7 @@ public class CalcParser extends Parser {
 
 			            ((WriteContext)_localctx).code =  ((WriteContext)_localctx).expression.code;
 			            _localctx.code += "WRITE\n";
+			            _localctx.code += "POP \n";
 			        
 			}
 		}
@@ -1962,6 +1963,7 @@ public class CalcParser extends Parser {
 
 			            ((ReadContext)_localctx).code =  "READ\n";
 			            _localctx.code += "STOREG " + at.adresse + "\n";
+			            _localctx.code += "POP \n";
 			        
 			}
 		}
