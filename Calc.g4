@@ -429,6 +429,7 @@ read returns [ String code ]
 
 finInstruction : ( NEWLINE | ';' )+ ;
 
+COMMENT: '/*'~[\r\n]*'*/';
 // lexer
 NEWLINE : '\r'? '\n';
 
