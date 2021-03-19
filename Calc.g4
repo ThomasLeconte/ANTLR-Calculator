@@ -139,7 +139,7 @@ args returns [ String code, int size]
 
 bloc returns[ String code ]
 @init{ $code = new String(); }
-    : '{' NEWLINE+ (instruction { $code += $instruction.code; })* '}' NEWLINE*
+    : '{' NEWLINE? (instruction { $code += $instruction.code; })* '}' NEWLINE*
     ;
 
 expression returns [ String code ]

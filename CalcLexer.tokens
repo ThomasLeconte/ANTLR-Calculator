@@ -30,30 +30,19 @@ T__28=29
 T__29=30
 T__30=31
 T__31=32
-<<<<<<< HEAD
-COMMENT=33
-NEWLINE=34
-WS=35
-RETURN=36
-ENTIER=37
-FLOAT=38
-TYPE=39
-IDENTIFIANT=40
-UNMATCH=41
-=======
 T__32=33
 T__33=34
 T__34=35
 T__35=36
-NEWLINE=37
-WS=38
-RETURN=39
-ENTIER=40
-FLOAT=41
-TYPE=42
-IDENTIFIANT=43
-UNMATCH=44
->>>>>>> f0dba1e37dadc88bfd128f509b64e2c7941f7978
+COMMENT=37
+NEWLINE=38
+WS=39
+RETURN=40
+ENTIER=41
+FLOAT=42
+TYPE=43
+IDENTIFIANT=44
+UNMATCH=45
 '('=1
 ')'=2
 ','=3
@@ -78,17 +67,6 @@ UNMATCH=44
 'false'=22
 '!'=23
 'while ('=24
-<<<<<<< HEAD
-'repeat'=25
-'until ('=26
-'for ('=27
-';'=28
-'if ('=29
-'else'=30
-'write('=31
-'read('=32
-'return'=36
-=======
 'while('=25
 'repeat'=26
 'until ('=27
@@ -101,5 +79,4 @@ UNMATCH=44
 'else'=34
 'write('=35
 'read('=36
-'return'=39
->>>>>>> f0dba1e37dadc88bfd128f509b64e2c7941f7978
+'return'=40
