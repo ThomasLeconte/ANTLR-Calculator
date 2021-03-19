@@ -64,7 +64,7 @@ instruction returns [ String code ]
         {
             $code = $bloc.code;
         }
-    | ifCondition
+    | ifCondition 
         {
             $code = $ifCondition.code;
         }
@@ -342,7 +342,7 @@ condition returns [String code]
     ;
 
 boucle returns [ String code ] 
-    : 'while (' condition ')' a = instruction
+    : ('while (' | 'while(') condition ')' a = instruction
         {
             String boucle1 = getNewLabel();
             String boucle2 = getNewLabel();
@@ -354,7 +354,7 @@ boucle returns [ String code ]
             $code += "JUMP "+ boucle1 + "\n";
             $code += "LABEL "+ boucle2 + "\n";
         }
-        |'repeat' d = instruction 'until (' e = condition ')'
+        |'repeat' d = instruction ('until ('| 'until(') e = condition ')'
         {
             String debutRepeat = getNewLabel();
             String finBoucle = getNewLabel();
@@ -366,7 +366,7 @@ boucle returns [ String code ]
             $code += "JUMP "+ finBoucle + "\n";
             $code += "LABEL "+ finBoucle + "\n";
         }
-        |'for (' c= assignation ';' condition ';' b=assignation ')' instruction
+        |('for ('| 'for(') c= assignation ';' condition ';' b=assignation ')' instruction
         {
             String debutFor = getNewLabel();
             String exit = getNewLabel();
@@ -383,7 +383,7 @@ boucle returns [ String code ]
     ;
 
 ifCondition returns [ String code ]
-    : 'if (' condition ')' a = instruction 'else' b = instruction
+    : ('if ('| 'if(') condition ')' a = instruction 'else' b = instruction
         {
             String elseArea = getNewLabel();
             String exit = getNewLabel();
@@ -397,7 +397,7 @@ ifCondition returns [ String code ]
             $code += "JUMP "+exit+"\n"; 
             $code += "LABEL "+exit+"\n";
         }
-    | 'if (' condition ')' a = instruction
+    | ('if ('| 'if(') condition ')' a = instruction
         {
             String exit = getNewLabel();
 

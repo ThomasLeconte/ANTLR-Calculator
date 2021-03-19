@@ -1,4 +1,5 @@
 
+<<<<<<< HEAD
 D:\Licence 3\Semestre 2\language compilation\TP\TP5>java org.antlr.v4.gui.TestRig Calc start -gui 
 PUSHI 0
   JUMP Main
@@ -65,6 +66,25 @@ WRITE
 JUMP B12
 LABEL B12
 PUSHI 0
+=======
+PUSHI 0
+PUSHI 21
+STOREG 0
+  JUMP Main
+LABEL Main
+LABEL B1
+PUSHI 0
+JUMPF B2
+PUSHG 0
+PUSHI 1
+SUB
+STOREG 0
+JUMP B1
+LABEL B2
+PUSHI 2
+PUSHG 0
+MUL
+>>>>>>> f0dba1e37dadc88bfd128f509b64e2c7941f7978
 WRITE
   HALT
 
