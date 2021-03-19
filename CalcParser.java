@@ -1963,7 +1963,6 @@ public class CalcParser extends Parser {
 
 			            ((ReadContext)_localctx).code =  "READ\n";
 			            _localctx.code += "STOREG " + at.adresse + "\n";
-			            _localctx.code += "POP \n";
 			        
 			}
 		}
