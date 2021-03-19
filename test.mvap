@@ -1,36 +1,6 @@
 
-PUSHI 0
-PUSHI 0
-PUSHI 42
-STOREG 1
-PUSHI 0
-PUSHI 54
-STOREG 2
+C:\Users\adri3\Desktop\th‚orie des langages\calculette>java org.antlr.v4.gui.TestRig Calc start -gui 
   JUMP Main
 LABEL Main
-READ
-STOREG 0
-PUSHG 0
-WRITE
-PUSHI 10
-STOREG 0
-READ
-STOREG 2
-PUSHG 1
-WRITE
-PUSHG 0
-PUSHI 1
-ADD
-STOREG 1
-PUSHG 1
-WRITE
-PUSHI 2
-PUSHG 1
-MUL
-PUSHI 20
-ADD
-STOREG 0
-PUSHG 0
-WRITE
   HALT
 

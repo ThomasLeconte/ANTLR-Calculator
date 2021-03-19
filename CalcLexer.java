@@ -46,18 +46,8 @@ public class CalcLexer extends Lexer {
 		return new String[] {
 			null, "'('", "')'", "','", "'{'", "'}'", "'/'", "'*'", "'+'", "'-'", 
 			"'='", "'++'", "'--'", "'>'", "'>='", "'<'", "'<='", "'=='", "'!='", 
-			"'&&'", "'||'", "'true'", "'false'", "'!'", "'while('", "'repeat'", "'until('", 
 			"'for('", "';'", "'if('", "'else'", "'write('", "'read('", null, null, 
 			null, "'return'"
-		};
-	}
-	private static final String[] _LITERAL_NAMES = makeLiteralNames();
-	private static String[] makeSymbolicNames() {
-		return new String[] {
-			null, null, null, null, null, null, null, null, null, null, null, null, 
-			null, null, null, null, null, null, null, null, null, null, null, null, 
-			null, null, null, null, null, null, null, null, null, "COMMENT", "NEWLINE", 
-			"WS", "RETURN", "ENTIER", "FLOAT", "TYPE", "IDENTIFIANT", "UNMATCH"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
