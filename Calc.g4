@@ -30,7 +30,7 @@ calcul returns [ String code ]
         NEWLINE*
         
         { $code += "LABEL Main\n"; }
-        ( finInstruction? instruction { $code += $instruction.code; })*
+        ( finInstruction*? instruction { $code += $instruction.code; })*
 
         { $code += "  HALT\n"; } 
     ;
