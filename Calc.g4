@@ -142,7 +142,8 @@ bloc returns[ String code ]
     : '{' NEWLINE? (instruction { $code += $instruction.code; })* '}' NEWLINE*
     ;
 
-expression returns [ String code ]
+expression returns [ String code, String type ]
+@init{ $code = new String(); $type = new String(); }
     : a = expression op = ( '/' | '*' ) b = expression 
         {
             if($op.text.equals("/")){
@@ -163,22 +164,30 @@ expression returns [ String code ]
     | IDENTIFIANT
         {
             AdresseType var = tableSymboles.getAdresseType($IDENTIFIANT.text);
+            if(var.type == "float"){
+                $type = "float";
+            }
+            System.out.println($type);
             if(isLocalAdress(var)){
                 $code = "PUSHL "+var.adresse+"\n";
             }else{
                 $code = "PUSHG "+var.adresse+"\n";
             }
-
         }
     | ENTIER
         {
             $code = "PUSHI " + $ENTIER.text +"\n";
         }
-    | '-' f = ENTIER
+    | '-' ENTIER
         {
             $code = "PUSHI 0\n";
-            $code += "PUSHI "+$f.text+"\n";
+            $code += "PUSHI "+$ENTIER.text+"\n";
             $code += "SUB\n";
+        }
+    | FLOAT
+        {
+            $type = "float";
+            $code = "PUSHF "+$FLOAT.text+"\n";
         }
     | IDENTIFIANT '(' args ')'                  // appel de fonction  
         {
@@ -191,13 +200,23 @@ expression returns [ String code ]
 decl returns [ String code ]
     : TYPE IDENTIFIANT finInstruction
         {
-            $code = "PUSHI 0\n";
+            if($TYPE.text == "int"){
+                $code = "PUSHI 0\n";
+            }else{
+                $code = "PUSHI 0\n";
+                $code = "PUSHI 0\n";
+            }
             tableSymboles.putVar($IDENTIFIANT.text, $TYPE.text);
         }
 
     | TYPE IDENTIFIANT '=' expression finInstruction
         {
-            $code = "PUSHI 0\n";
+            if($TYPE.text == "int"){
+                $code = "PUSHI 0\n";
+            }else{
+                $code = "PUSHI 0\n";
+                $code = "PUSHI 0\n";
+            }
             $code += $expression.code; //PUSHI x
             tableSymboles.putVar($IDENTIFIANT.text, $TYPE.text); //On sauvegarde la variable
             AdresseType at = tableSymboles.getAdresseType($IDENTIFIANT.text);
@@ -342,7 +361,7 @@ condition returns [String code]
     ;
 
 boucle returns [ String code ] 
-    : ('while (' | 'while(') condition ')' a = instruction
+    : 'while' '(' condition ')' a = instruction
         {
             String boucle1 = getNewLabel();
             String boucle2 = getNewLabel();
@@ -354,7 +373,7 @@ boucle returns [ String code ]
             $code += "JUMP "+ boucle1 + "\n";
             $code += "LABEL "+ boucle2 + "\n";
         }
-        |'repeat' d = instruction ('until ('| 'until(') e = condition ')'
+        |'repeat' d = instruction 'until' '(' e = condition ')'
         {
             String debutRepeat = getNewLabel();
             String finBoucle = getNewLabel();
@@ -366,7 +385,7 @@ boucle returns [ String code ]
             $code += "JUMP "+ finBoucle + "\n";
             $code += "LABEL "+ finBoucle + "\n";
         }
-        |('for ('| 'for(') c= assignation ';' condition ';' b=assignation ')' instruction
+        |'for' '(' c= assignation ';' condition ';' b=assignation ')' instruction
         {
             String debutFor = getNewLabel();
             String exit = getNewLabel();
@@ -383,7 +402,7 @@ boucle returns [ String code ]
     ;
 
 ifCondition returns [ String code ]
-    : ('if ('| 'if(') condition ')' a = instruction 'else' b = instruction
+    : 'if' '(' condition ')' a = instruction 'else' b = instruction
         {
             String elseArea = getNewLabel();
             String exit = getNewLabel();
@@ -397,7 +416,7 @@ ifCondition returns [ String code ]
             $code += "JUMP "+exit+"\n"; 
             $code += "LABEL "+exit+"\n";
         }
-    | ('if ('| 'if(') condition ')' a = instruction
+    | 'if' '(' condition ')' a = instruction
         {
             String exit = getNewLabel();
 
@@ -410,21 +429,34 @@ ifCondition returns [ String code ]
     ;
 
 write returns [ String code ] 
-    : 'write(' expression ')'
+    : 'write' '(' expression ')'
         {
             $code = $expression.code;
-            $code += "WRITE\n";
-            $code += "POP \n";
+            if($expression.type == "float"){
+                $code += "WRITEF\n";
+                $code += "POP \n";
+                $code += "POP \n"; //2 pop si c'est un float  
+            }else{
+                $code += "WRITE\n";
+                $code += "POP \n";
+            }
         }
     ;
 
 read returns [ String code ]
-    : 'read(' IDENTIFIANT ')'
+    : 'read' '(' IDENTIFIANT ')'
         {
             AdresseType at = tableSymboles.getAdresseType($IDENTIFIANT.text);
-
-            $code = "READ\n";
-            $code += "STOREG " + at.adresse + "\n";
+            if(at.type == "float"){
+                $code = "READF\n";
+            }else{
+                $code = "READ\n";
+            }
+            if(at.adresse >= 0){
+                $code += "STOREG " + at.adresse + "\n";
+            }else{
+                $code += "STOREL " + at.adresse + "\n";
+            }
         }
     ;
 
@@ -440,7 +472,7 @@ RETURN: 'return';
 
 ENTIER: ('0' ..'9')+;
 
-FLOAT : ENTIER+'.'ENTIER+ ;
+FLOAT : ENTIER+'.'ENTIER* ;
 
 TYPE : 'int' | 'float' ;
 
