@@ -30,7 +30,7 @@ calcul returns [ String code ]
         NEWLINE*
         
         { $code += "LABEL Main\n"; }
-        (instruction { $code += $instruction.code; })*
+        ( finInstruction? instruction { $code += $instruction.code; })*
 
         { $code += "  HALT\n"; } 
     ;
@@ -195,6 +195,8 @@ expression returns [ String code, String type ]
             String var = tableSymboles.getFunction($IDENTIFIANT.text); //retourne le type de la fonction
             $code += "CALL "+$IDENTIFIANT.text+"\n";
         }
+    | SLASHSTARTCOMMENT
+    | DOUBLESLASHCOMMENT
     ;
 
 decl returns [ String code ]
@@ -248,7 +250,6 @@ assignation returns [ String code ]
             }else{
                 $code = "PUSHG "+at.adresse+"\n";
             }
-            $code = "PUSHG "+at.adresse+"\n";
             if($operator.text.equals("++")){
                 $code += "PUSHI 1\n";
                 $code += "ADD\n";
@@ -462,7 +463,9 @@ read returns [ String code ]
 
 finInstruction : ( NEWLINE | ';' )+ ;
 
-COMMENT: '/*'~[\r\n]*'*/';
+DOUBLESLASHCOMMENT: '//'.*? NEWLINE -> skip;
+
+SLASHSTARTCOMMENT: '/*'.*?'*/' -> skip;
 // lexer
 NEWLINE : '\r'? '\n';
 
