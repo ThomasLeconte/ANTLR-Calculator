@@ -146,6 +146,14 @@ expression returns [ String code, String type ]
 @init{ $code = new String(); $type = new String(); }
     : a = expression op = ( '/' | '*' ) b = expression 
         {
+            if($a.type.equals($b.type) && $a.type.equals("int")){
+                $type = "int";
+            }
+
+            if($a.type.equals($b.type) && $a.type.equals("float")){
+                $type = "float";
+            }
+
             if($op.text.equals("/")){
                 $code = $a.code + $b.code + "DIV\n"; 
             }else{ 
@@ -154,18 +162,28 @@ expression returns [ String code, String type ]
         }
     | c = expression op = ( '+' | '-' ) d = expression 
         {
+            if($c.type.equals($d.type) && $c.type.equals("int")){
+                $type = "int";
+            }
+
+            if($c.type.equals($d.type) && $c.type.equals("float")){
+                $type = "float";
+            }
+
             if($op.text.equals("+")){
                 $code = $c.code + $d.code + "ADD\n"; 
             }else{ 
                 $code = $c.code + $d.code + "SUB\n";
             }
         }
-    | '(' e = expression ')' {$code = $e.code;}
+    | '(' e = expression ')' {$code = $e.code; $type = $e.type; }
     | IDENTIFIANT
         {
             AdresseType var = tableSymboles.getAdresseType($IDENTIFIANT.text);
             if(var.type.equals("float")){
                 $type = "float";
+            }else{
+                $type = "int";
             }
             if(isLocalAdress(var)){
                 $code = "PUSHL "+var.adresse+"\n";
@@ -175,10 +193,12 @@ expression returns [ String code, String type ]
         }
     | ENTIER
         {
+            $type = "int";
             $code = "PUSHI " + $ENTIER.text +"\n";
         }
     | '-' ENTIER
         {
+            $type = "int";
             $code = "PUSHI 0\n";
             $code += "PUSHI "+$ENTIER.text+"\n";
             $code += "SUB\n";
@@ -201,7 +221,6 @@ expression returns [ String code, String type ]
 decl returns [ String code ]
     : TYPE IDENTIFIANT finInstruction
         {
-            System.out.println($TYPE.text.equals("int"));
             if($TYPE.text.equals("int")){
                 $code = "PUSHI 0\n";
             }else{
@@ -433,7 +452,7 @@ write returns [ String code ]
     : 'write' '(' expression ')'
         {
             $code = $expression.code;
-            if(tableSymboles.getAdresseType($expression.text.substring(0,1)).type.equals("float")){
+            if($expression.type.equals("float")){
                 $code += "WRITEF\n";
                 $code += "POP \n";
                 $code += "POP \n"; //2 pop si c'est un float  

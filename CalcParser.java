@@ -922,7 +922,7 @@ public class CalcParser extends Parser {
 				((ExpressionContext)_localctx).e = expression(0);
 				setState(181);
 				match(T__1);
-				((ExpressionContext)_localctx).code =  ((ExpressionContext)_localctx).e.code;
+				((ExpressionContext)_localctx).code =  ((ExpressionContext)_localctx).e.code; ((ExpressionContext)_localctx).type =  ((ExpressionContext)_localctx).e.type; 
 				}
 				break;
 			case 2:
@@ -933,6 +933,8 @@ public class CalcParser extends Parser {
 				            AdresseType var = tableSymboles.getAdresseType((((ExpressionContext)_localctx).IDENTIFIANT!=null?((ExpressionContext)_localctx).IDENTIFIANT.getText():null));
 				            if(var.type.equals("float")){
 				                ((ExpressionContext)_localctx).type =  "float";
+				            }else{
+				                ((ExpressionContext)_localctx).type =  "int";
 				            }
 				            if(isLocalAdress(var)){
 				                ((ExpressionContext)_localctx).code =  "PUSHL "+var.adresse+"\n";
@@ -947,6 +949,7 @@ public class CalcParser extends Parser {
 				setState(186);
 				((ExpressionContext)_localctx).ENTIER = match(ENTIER);
 
+				            ((ExpressionContext)_localctx).type =  "int";
 				            ((ExpressionContext)_localctx).code =  "PUSHI " + (((ExpressionContext)_localctx).ENTIER!=null?((ExpressionContext)_localctx).ENTIER.getText():null) +"\n";
 				        
 				}
@@ -958,6 +961,7 @@ public class CalcParser extends Parser {
 				setState(189);
 				((ExpressionContext)_localctx).ENTIER = match(ENTIER);
 
+				            ((ExpressionContext)_localctx).type =  "int";
 				            ((ExpressionContext)_localctx).code =  "PUSHI 0\n";
 				            _localctx.code += "PUSHI "+(((ExpressionContext)_localctx).ENTIER!=null?((ExpressionContext)_localctx).ENTIER.getText():null)+"\n";
 				            _localctx.code += "SUB\n";
@@ -1038,6 +1042,14 @@ public class CalcParser extends Parser {
 						setState(205);
 						((ExpressionContext)_localctx).b = expression(11);
 
+						                      if(((ExpressionContext)_localctx).a.type.equals(((ExpressionContext)_localctx).b.type) && ((ExpressionContext)_localctx).a.type.equals("int")){
+						                          ((ExpressionContext)_localctx).type =  "int";
+						                      }
+
+						                      if(((ExpressionContext)_localctx).a.type.equals(((ExpressionContext)_localctx).b.type) && ((ExpressionContext)_localctx).a.type.equals("float")){
+						                          ((ExpressionContext)_localctx).type =  "float";
+						                      }
+
 						                      if((((ExpressionContext)_localctx).op!=null?((ExpressionContext)_localctx).op.getText():null).equals("/")){
 						                          ((ExpressionContext)_localctx).code =  ((ExpressionContext)_localctx).a.code + ((ExpressionContext)_localctx).b.code + "DIV\n"; 
 						                      }else{ 
@@ -1067,6 +1079,14 @@ public class CalcParser extends Parser {
 						}
 						setState(210);
 						((ExpressionContext)_localctx).d = expression(10);
+
+						                      if(((ExpressionContext)_localctx).c.type.equals(((ExpressionContext)_localctx).d.type) && ((ExpressionContext)_localctx).c.type.equals("int")){
+						                          ((ExpressionContext)_localctx).type =  "int";
+						                      }
+
+						                      if(((ExpressionContext)_localctx).c.type.equals(((ExpressionContext)_localctx).d.type) && ((ExpressionContext)_localctx).c.type.equals("float")){
+						                          ((ExpressionContext)_localctx).type =  "float";
+						                      }
 
 						                      if((((ExpressionContext)_localctx).op!=null?((ExpressionContext)_localctx).op.getText():null).equals("+")){
 						                          ((ExpressionContext)_localctx).code =  ((ExpressionContext)_localctx).c.code + ((ExpressionContext)_localctx).d.code + "ADD\n"; 
@@ -1140,7 +1160,6 @@ public class CalcParser extends Parser {
 				setState(220);
 				finInstruction();
 
-				            System.out.println((((DeclContext)_localctx).TYPE!=null?((DeclContext)_localctx).TYPE.getText():null).equals("int"));
 				            if((((DeclContext)_localctx).TYPE!=null?((DeclContext)_localctx).TYPE.getText():null).equals("int")){
 				                ((DeclContext)_localctx).code =  "PUSHI 0\n";
 				            }else{
@@ -1943,7 +1962,7 @@ public class CalcParser extends Parser {
 			match(T__1);
 
 			            ((WriteContext)_localctx).code =  ((WriteContext)_localctx).expression.code;
-			            if(tableSymboles.getAdresseType((((WriteContext)_localctx).expression!=null?_input.getText(((WriteContext)_localctx).expression.start,((WriteContext)_localctx).expression.stop):null).substring(0,1)).type.equals("float")){
+			            if(((WriteContext)_localctx).expression.type.equals("float")){
 			                _localctx.code += "WRITEF\n";
 			                _localctx.code += "POP \n";
 			                _localctx.code += "POP \n"; //2 pop si c'est un float  
