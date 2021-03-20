@@ -931,10 +931,9 @@ public class CalcParser extends Parser {
 				((ExpressionContext)_localctx).IDENTIFIANT = match(IDENTIFIANT);
 
 				            AdresseType var = tableSymboles.getAdresseType((((ExpressionContext)_localctx).IDENTIFIANT!=null?((ExpressionContext)_localctx).IDENTIFIANT.getText():null));
-				            if(var.type == "float"){
+				            if(var.type.equals("float")){
 				                ((ExpressionContext)_localctx).type =  "float";
 				            }
-				            System.out.println(_localctx.type);
 				            if(isLocalAdress(var)){
 				                ((ExpressionContext)_localctx).code =  "PUSHL "+var.adresse+"\n";
 				            }else{
@@ -1141,11 +1140,12 @@ public class CalcParser extends Parser {
 				setState(220);
 				finInstruction();
 
-				            if((((DeclContext)_localctx).TYPE!=null?((DeclContext)_localctx).TYPE.getText():null) == "int"){
+				            System.out.println((((DeclContext)_localctx).TYPE!=null?((DeclContext)_localctx).TYPE.getText():null).equals("int"));
+				            if((((DeclContext)_localctx).TYPE!=null?((DeclContext)_localctx).TYPE.getText():null).equals("int")){
 				                ((DeclContext)_localctx).code =  "PUSHI 0\n";
 				            }else{
 				                ((DeclContext)_localctx).code =  "PUSHI 0\n";
-				                ((DeclContext)_localctx).code =  "PUSHI 0\n";
+				                _localctx.code += "PUSHI 0\n";
 				            }
 				            tableSymboles.putVar((((DeclContext)_localctx).IDENTIFIANT!=null?((DeclContext)_localctx).IDENTIFIANT.getText():null), (((DeclContext)_localctx).TYPE!=null?((DeclContext)_localctx).TYPE.getText():null));
 				        
@@ -1165,11 +1165,11 @@ public class CalcParser extends Parser {
 				setState(227);
 				finInstruction();
 
-				            if((((DeclContext)_localctx).TYPE!=null?((DeclContext)_localctx).TYPE.getText():null) == "int"){
+				            if((((DeclContext)_localctx).TYPE!=null?((DeclContext)_localctx).TYPE.getText():null).equals("int")){
 				                ((DeclContext)_localctx).code =  "PUSHI 0\n";
 				            }else{
 				                ((DeclContext)_localctx).code =  "PUSHI 0\n";
-				                ((DeclContext)_localctx).code =  "PUSHI 0\n";
+				                _localctx.code += "PUSHI 0\n";
 				            }
 				            _localctx.code += ((DeclContext)_localctx).expression.code; //PUSHI x
 				            tableSymboles.putVar((((DeclContext)_localctx).IDENTIFIANT!=null?((DeclContext)_localctx).IDENTIFIANT.getText():null), (((DeclContext)_localctx).TYPE!=null?((DeclContext)_localctx).TYPE.getText():null)); //On sauvegarde la variable
@@ -1943,7 +1943,7 @@ public class CalcParser extends Parser {
 			match(T__1);
 
 			            ((WriteContext)_localctx).code =  ((WriteContext)_localctx).expression.code;
-			            if(((WriteContext)_localctx).expression.type == "float"){
+			            if(tableSymboles.getAdresseType((((WriteContext)_localctx).expression!=null?_input.getText(((WriteContext)_localctx).expression.start,((WriteContext)_localctx).expression.stop):null).substring(0,1)).type.equals("float")){
 			                _localctx.code += "WRITEF\n";
 			                _localctx.code += "POP \n";
 			                _localctx.code += "POP \n"; //2 pop si c'est un float  
@@ -1999,7 +1999,7 @@ public class CalcParser extends Parser {
 			match(T__1);
 
 			            AdresseType at = tableSymboles.getAdresseType((((ReadContext)_localctx).IDENTIFIANT!=null?((ReadContext)_localctx).IDENTIFIANT.getText():null));
-			            if(at.type == "float"){
+			            if(at.type.equals("float")){
 			                ((ReadContext)_localctx).code =  "READF\n";
 			            }else{
 			                ((ReadContext)_localctx).code =  "READ\n";
@@ -2008,6 +2008,9 @@ public class CalcParser extends Parser {
 			                _localctx.code += "STOREG " + at.adresse + "\n";
 			            }else{
 			                _localctx.code += "STOREL " + at.adresse + "\n";
+			            }
+			            if(at.type.equals("float")){
+			                _localctx.code += "POP \n";
 			            }
 			        
 			}

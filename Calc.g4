@@ -164,10 +164,9 @@ expression returns [ String code, String type ]
     | IDENTIFIANT
         {
             AdresseType var = tableSymboles.getAdresseType($IDENTIFIANT.text);
-            if(var.type == "float"){
+            if(var.type.equals("float")){
                 $type = "float";
             }
-            System.out.println($type);
             if(isLocalAdress(var)){
                 $code = "PUSHL "+var.adresse+"\n";
             }else{
@@ -202,22 +201,23 @@ expression returns [ String code, String type ]
 decl returns [ String code ]
     : TYPE IDENTIFIANT finInstruction
         {
-            if($TYPE.text == "int"){
+            System.out.println($TYPE.text.equals("int"));
+            if($TYPE.text.equals("int")){
                 $code = "PUSHI 0\n";
             }else{
                 $code = "PUSHI 0\n";
-                $code = "PUSHI 0\n";
+                $code += "PUSHI 0\n";
             }
             tableSymboles.putVar($IDENTIFIANT.text, $TYPE.text);
         }
 
     | TYPE IDENTIFIANT '=' expression finInstruction
         {
-            if($TYPE.text == "int"){
+            if($TYPE.text.equals("int")){
                 $code = "PUSHI 0\n";
             }else{
                 $code = "PUSHI 0\n";
-                $code = "PUSHI 0\n";
+                $code += "PUSHI 0\n";
             }
             $code += $expression.code; //PUSHI x
             tableSymboles.putVar($IDENTIFIANT.text, $TYPE.text); //On sauvegarde la variable
@@ -433,7 +433,7 @@ write returns [ String code ]
     : 'write' '(' expression ')'
         {
             $code = $expression.code;
-            if($expression.type == "float"){
+            if(tableSymboles.getAdresseType($expression.text.substring(0,1)).type.equals("float")){
                 $code += "WRITEF\n";
                 $code += "POP \n";
                 $code += "POP \n"; //2 pop si c'est un float  
@@ -448,7 +448,7 @@ read returns [ String code ]
     : 'read' '(' IDENTIFIANT ')'
         {
             AdresseType at = tableSymboles.getAdresseType($IDENTIFIANT.text);
-            if(at.type == "float"){
+            if(at.type.equals("float")){
                 $code = "READF\n";
             }else{
                 $code = "READ\n";
@@ -457,6 +457,9 @@ read returns [ String code ]
                 $code += "STOREG " + at.adresse + "\n";
             }else{
                 $code += "STOREL " + at.adresse + "\n";
+            }
+            if(at.type.equals("float")){
+                $code += "POP \n";
             }
         }
     ;
