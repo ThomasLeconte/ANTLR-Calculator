@@ -1,0 +1,54 @@
+       D00test   compil          assembl         execution       résultat OK
+       D01test   compil          assembl
+                                   read0         execution       résultat OK
+                                   read1         execution       résultat OK
+       D02test   compil          assembl         execution       résultat OK
+       D03test   compil          assembl         execution       résultat OK
+       E01test   compil          assembl         execution       résultat OK
+       F01test   compil          assembl         execution       résultat OK
+       G01test   compil          assembl         execution       résultat OK
+       G02test   compil          assembl         execution       résultat OK
+       G03test   compil          assembl         execution       résultat OK
+       H01test   compil          assembl         execution       résultat KO
+       H02test   compil          assembl
+                                   read0         execution       résultat OK
+                                   read1         execution       résultat OK
+       H03test   compil          assembl
+                                   read0         execution       résultat OK
+                                   read1         execution       résultat OK
+       I01test   compil          assembl
+                                   read0         execution       résultat OK
+                                   read1         execution       résultat OK
+       I02test   compil          assembl         execution       résultat OK
+       I03test   compil          assembl         execution       résultat OK
+       I04test   compil          assembl
+                                   read0         execution       résultat OK
+                                   read1         execution       résultat OK
+                                   read2         execution       résultat OK
+       J01test   compil          assembl         execution       résultat OK
+       J02test   compil          assembl         execution       résultat OK
+       J03test   compil          assembl         execution       résultat OK
+       J04test   compil          assembl         execution       résultat OK
+       L01test   compil          assembl         execution       résultat OK
+       L02test   compil          assembl         execution       résultat KO
+       L03test   compil          assembl         execution       résultat KO
+       L04test   compil          assembl         execution       résultat KO
+       M01test   compil          assembl
+                                   read0         execution       résultat OK
+           N01   compil          assembl
+                                read1664         execution       résultat OK
+                                  read42         execution       résultat OK
+           N02   compil          assembl         execution       résultat KO
+           N03   compil          assembl         execution       résultat KO
+           N04   compil Bug      assembl Bug     execution Bug   résultat KO
+      Of01test   compil          assembl
+                                    read         execution       résultat KO
+      Of02test   compil          assembl         execution       résultat KO
+      Of03test   compil          assembl         execution       résultat KO
+      Of04test   compil          assembl         execution       résultat KO
+      Of05test   compil          assembl         execution Bug   résultat KO
+          Of06   compil          assembl         execution Erreur
+          Of07   compil Bug      assembl         execution       résultat KO
+      Ot01test   compil Bug      assembl Bug     execution Bug   résultat KO
+
+Résultat: 88
